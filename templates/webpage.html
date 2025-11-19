@@ -1,0 +1,534 @@
+{% extends "base.html" %}
+
+{% block title %}網頁水印 - 雙重水印系統{% endblock %}
+
+{% block content %}
+<div class="webpage-watermark-container">
+    <div class="page-header">
+        <h1>🌐 網頁水印系統</h1>
+        <p class="subtitle">為網頁內容添加明碼與隱碼雙重水印保護</p>
+        <a href="/" class="back-link">← 返回首頁</a>
+    </div>
+    
+    <div class="watermark-demo-layout">
+        <!-- 左側控制面板 -->
+        <div class="control-panel">
+            <div class="panel-header">
+                <h2>⚙️ 水印設定</h2>
+                <div class="quick-actions">
+                    <button onclick="applyVisibleWatermark()" class="btn btn-primary btn-sm">
+                        <span class="icon">✓</span> 套用
+                    </button>
+                    <button onclick="removeVisibleWatermark()" class="btn btn-secondary btn-sm">
+                        <span class="icon">✕</span> 移除
+                    </button>
+                    <button onclick="resetWatermarkSettings()" class="btn btn-outline btn-sm">
+                        <span class="icon">↻</span> 重置
+                    </button>
+                </div>
+            </div>
+            
+            <div class="panel-tabs">
+                <button class="tab-btn active" onclick="showTab('basic')">基本設定</button>
+                <button class="tab-btn" onclick="showTab('style')">樣式設定</button>
+                <button class="tab-btn" onclick="showTab('advanced')">進階設定</button>
+            </div>
+            
+            <!-- 基本設定標籤頁 -->
+            <div id="tab-basic" class="tab-content active">
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">水印文字</span>
+                        <span class="label-hint">顯示在水印上的文字</span>
+                    </label>
+                    <input type="text" id="watermark_txt" value="機密文件" placeholder="輸入水印文字" />
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">目標區域</span>
+                        <span class="label-hint">選擇要應用水印的區域</span>
+                    </label>
+                    <select id="target_area" onchange="updateParentNode()">
+                        <option value="preview_area">整個預覽區域</option>
+                        <option value="yahoo-header">Yahoo 標題區</option>
+                        <option value="yahoo-content">Yahoo 內容區</option>
+                        <option value="yahoo-sidebar">Yahoo 側邊欄</option>
+                        <option value="yahoo-footer">Yahoo 頁尾</option>
+                        <option value="custom">自訂 ID</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="custom-id-group" style="display: none;">
+                    <label>
+                        <span class="label-text">自訂元素 ID</span>
+                        <span class="label-hint">輸入目標元素的 ID</span>
+                    </label>
+                    <input type="text" id="watermark_parent_node" value="preview_area" placeholder="例如: preview_area" />
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">透明度</span>
+                        <span class="label-hint" id="alpha_value">0.15</span>
+                    </label>
+                    <input type="range" id="watermark_alpha" min="0" max="1" step="0.05" value="0.15" />
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">旋轉角度</span>
+                        <span class="label-hint">水印旋轉角度（度）</span>
+                    </label>
+                    <input type="range" id="watermark_angle" min="-180" max="180" value="15" />
+                    <span class="range-value" id="angle_value">15°</span>
+                </div>
+            </div>
+            
+            <!-- 樣式設定標籤頁 -->
+            <div id="tab-style" class="tab-content">
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">字體</span>
+                    </label>
+                    <select id="watermark_font">
+                        <option value="微軟雅黑" selected>微軟雅黑</option>
+                        <option value="Arial">Arial</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Courier New">Courier New</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">字體大小</span>
+                    </label>
+                    <input type="text" id="watermark_fontsize" value="18px" placeholder="例如: 18px" />
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">顏色</span>
+                    </label>
+                    <div class="color-input-group">
+                        <input type="color" id="watermark_color" value="#000000" />
+                        <input type="text" id="watermark_color_text" value="#000000" placeholder="#000000" />
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">水印寬度</span>
+                    </label>
+                    <input type="number" id="watermark_width" value="100" min="0" />
+                    <span class="unit">px</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">水印高度</span>
+                    </label>
+                    <input type="number" id="watermark_height" value="100" min="0" />
+                    <span class="unit">px</span>
+                </div>
+            </div>
+            
+            <!-- 進階設定標籤頁 -->
+            <div id="tab-advanced" class="tab-content">
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">起始 X 座標</span>
+                    </label>
+                    <input type="number" id="watermark_x" value="20" min="0" />
+                    <span class="unit">px</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">起始 Y 座標</span>
+                    </label>
+                    <input type="number" id="watermark_y" value="20" min="0" />
+                    <span class="unit">px</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">行數 (0=自動)</span>
+                    </label>
+                    <input type="number" id="watermark_rows" value="0" min="0" />
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">列數 (0=自動)</span>
+                    </label>
+                    <input type="number" id="watermark_cols" value="0" min="0" />
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">X 軸間隔</span>
+                    </label>
+                    <input type="number" id="watermark_x_space" value="50" min="0" />
+                    <span class="unit">px</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">Y 軸間隔</span>
+                    </label>
+                    <input type="number" id="watermark_y_space" value="50" min="0" />
+                    <span class="unit">px</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="monitor" checked />
+                        <span class="label-text">啟用防刪除監聽</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- 隱碼水印區 -->
+            <div class="invisible-watermark-section">
+                <h3>🔐 隱碼水印</h3>
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">隱藏文字</span>
+                        <span class="label-hint">使用零寬字符嵌入</span>
+                    </label>
+                    <input type="text" id="invisible_text" value="UserID:12345" placeholder="輸入要隱藏的文字" />
+                </div>
+                <div class="btn-group">
+                    <button onclick="applyInvisibleWatermark()" class="btn btn-primary btn-sm">嵌入</button>
+                    <button onclick="extractInvisibleWatermark()" class="btn btn-success btn-sm">提取</button>
+                </div>
+                <div id="extracted_result" class="result"></div>
+            </div>
+        </div>
+        
+        <!-- 右側預覽區域 -->
+        <div class="preview-panel">
+            <div class="preview-header">
+                <h2>📄 預覽區域</h2>
+                <div class="preview-actions">
+                    <button onclick="highlightTargetArea()" class="btn-icon" title="高亮目標區域">
+                        <span>🔍</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 假的 Yahoo 首頁 -->
+            <div id="preview_area" class="yahoo-preview">
+                <!-- Yahoo 標題區 -->
+                <div id="yahoo-header" class="yahoo-header">
+                    <div class="yahoo-logo">
+                        <span class="yahoo-text">YAHOO!</span>
+                    </div>
+                    <div class="yahoo-search">
+                        <input type="text" placeholder="搜尋網頁、圖片、影片..." />
+                        <button>搜尋</button>
+                    </div>
+                    <div class="yahoo-nav">
+                        <a href="#">郵件</a>
+                        <a href="#">新聞</a>
+                        <a href="#">財經</a>
+                        <a href="#">運動</a>
+                        <a href="#">娛樂</a>
+                    </div>
+                </div>
+                
+                <!-- Yahoo 主內容區 -->
+                <div class="yahoo-main">
+                    <div id="yahoo-content" class="yahoo-content">
+                        <div class="news-section">
+                            <h3>📰 熱門新聞</h3>
+                            <ul class="news-list">
+                                <li><a href="#">科技股大漲，投資人看好未來前景</a></li>
+                                <li><a href="#">全球氣候變遷會議達成重要協議</a></li>
+                                <li><a href="#">新世代電動車技術突破性進展</a></li>
+                                <li><a href="#">國際體育賽事精彩回顧</a></li>
+                                <li><a href="#">健康生活：專家分享養生秘訣</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="featured-section">
+                            <h3>⭐ 精選內容</h3>
+                            <div class="featured-grid">
+                                <div class="featured-item">
+                                    <img src="https://via.placeholder.com/200x150?text=圖片1" alt="精選1" />
+                                    <h4>深度報導：科技創新趨勢</h4>
+                                    <p>探索最新科技發展與未來趨勢...</p>
+                                </div>
+                                <div class="featured-item">
+                                    <img src="https://via.placeholder.com/200x150?text=圖片2" alt="精選2" />
+                                    <h4>財經分析：市場動態觀察</h4>
+                                    <p>專業分析師解讀市場變化...</p>
+                                </div>
+                                <div class="featured-item">
+                                    <img src="https://via.placeholder.com/200x150?text=圖片3" alt="精選3" />
+                                    <h4>生活風格：時尚與設計</h4>
+                                    <p>最新時尚趨勢與設計靈感...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Yahoo 側邊欄 -->
+                    <div id="yahoo-sidebar" class="yahoo-sidebar">
+                        <div class="widget">
+                            <h4>📊 今日天氣</h4>
+                            <div class="weather-info">
+                                <div class="temp">25°C</div>
+                                <div class="condition">多雲</div>
+                            </div>
+                        </div>
+                        
+                        <div class="widget">
+                            <h4>💰 股市行情</h4>
+                            <ul class="stock-list">
+                                <li>台積電 <span class="up">+2.5%</span></li>
+                                <li>聯發科 <span class="up">+1.8%</span></li>
+                                <li>鴻海 <span class="down">-0.5%</span></li>
+                            </ul>
+                        </div>
+                        
+                        <div class="widget">
+                            <h4>🎯 熱門話題</h4>
+                            <ul class="trending-list">
+                                <li>#科技創新</li>
+                                <li>#環保議題</li>
+                                <li>#健康生活</li>
+                                <li>#投資理財</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Yahoo 頁尾 -->
+                <div id="yahoo-footer" class="yahoo-footer">
+                    <div class="footer-links">
+                        <a href="#">關於 Yahoo</a>
+                        <a href="#">隱私權政策</a>
+                        <a href="#">服務條款</a>
+                        <a href="#">聯絡我們</a>
+                    </div>
+                    <div class="copyright">
+                        <p>© 2025 Yahoo Inc. 版權所有</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/webpage-watermark.css">
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 標籤頁切換
+function showTab(tabName) {
+    // 隱藏所有標籤內容
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // 移除所有按鈕的 active 狀態
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // 顯示選中的標籤
+    document.getElementById('tab-' + tabName).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// 更新透明度顯示
+document.getElementById('watermark_alpha').addEventListener('input', function() {
+    document.getElementById('alpha_value').textContent = this.value;
+});
+
+// 更新角度顯示
+document.getElementById('watermark_angle').addEventListener('input', function() {
+    document.getElementById('angle_value').textContent = this.value + '°';
+});
+
+// 顏色同步
+document.getElementById('watermark_color').addEventListener('input', function() {
+    document.getElementById('watermark_color_text').value = this.value;
+});
+
+document.getElementById('watermark_color_text').addEventListener('input', function() {
+    if (/^#[0-9A-F]{6}$/i.test(this.value)) {
+        document.getElementById('watermark_color').value = this.value;
+    }
+});
+
+// 更新目標區域
+function updateParentNode() {
+    const targetArea = document.getElementById('target_area').value;
+    const customGroup = document.getElementById('custom-id-group');
+    const parentNodeInput = document.getElementById('watermark_parent_node');
+    
+    if (targetArea === 'custom') {
+        customGroup.style.display = 'block';
+    } else {
+        customGroup.style.display = 'none';
+        parentNodeInput.value = targetArea;
+    }
+}
+
+// 高亮目標區域
+function highlightTargetArea() {
+    const targetArea = document.getElementById('target_area').value;
+    const element = document.getElementById(targetArea);
+    
+    if (element) {
+        // 移除之前的高亮
+        document.querySelectorAll('.highlight-target').forEach(el => {
+            el.classList.remove('highlight-target');
+        });
+        
+        // 添加高亮
+        element.classList.add('highlight-target');
+        
+        // 滾動到目標區域
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        
+        // 3秒後移除高亮
+        setTimeout(() => {
+            element.classList.remove('highlight-target');
+        }, 3000);
+        
+        Utils.showMessage('已高亮目標區域: ' + targetArea, 'info');
+    }
+}
+
+function applyVisibleWatermark() {
+    const targetArea = document.getElementById('target_area').value;
+    const parentNode = targetArea === 'custom' 
+        ? document.getElementById('watermark_parent_node').value.trim()
+        : targetArea;
+    
+    const config = {
+        watermark_id: 'wm_div_id',
+        watermark_prefix: 'mask_div_id',
+        watermark_txt: document.getElementById('watermark_txt').value || '機密文件',
+        watermark_x: parseInt(document.getElementById('watermark_x').value) || 20,
+        watermark_y: parseInt(document.getElementById('watermark_y').value) || 20,
+        watermark_rows: parseInt(document.getElementById('watermark_rows').value) || 0,
+        watermark_cols: parseInt(document.getElementById('watermark_cols').value) || 0,
+        watermark_x_space: parseInt(document.getElementById('watermark_x_space').value) || 50,
+        watermark_y_space: parseInt(document.getElementById('watermark_y_space').value) || 50,
+        watermark_font: document.getElementById('watermark_font').value || '微軟雅黑',
+        watermark_color: document.getElementById('watermark_color').value || '#000000',
+        watermark_fontsize: document.getElementById('watermark_fontsize').value || '18px',
+        watermark_alpha: parseFloat(document.getElementById('watermark_alpha').value) || 0.15,
+        watermark_width: parseInt(document.getElementById('watermark_width').value) || 100,
+        watermark_height: parseInt(document.getElementById('watermark_height').value) || 100,
+        watermark_angle: parseInt(document.getElementById('watermark_angle').value) || 15,
+        watermark_parent_width: 0,
+        watermark_parent_height: 0,
+        watermark_parent_node: parentNode || null,
+        monitor: document.getElementById('monitor').checked
+    };
+    
+    WebpageWatermark.applyVisible(config);
+    Utils.showMessage('✓ 明碼水印已套用到: ' + (parentNode || '整個頁面'), 'success');
+}
+
+function removeVisibleWatermark() {
+    try {
+        if (typeof watermark !== 'undefined' && typeof watermark.remove === 'function') {
+            watermark.remove();
+        }
+        
+        const watermarkId = 'wm_div_id';
+        const watermarkPrefix = 'mask_div_id';
+        
+        // 移除主容器
+        const mainWatermarkDiv = document.getElementById(watermarkId);
+        if (mainWatermarkDiv) mainWatermarkDiv.remove();
+        
+        // 移除所有前綴元素
+        document.querySelectorAll(`[id^="${watermarkPrefix}"]`).forEach(el => el.remove());
+        
+        // 延遲再次檢查
+        setTimeout(() => {
+            document.querySelectorAll(`#${watermarkId}, [id^="${watermarkPrefix}"]`).forEach(el => el.remove());
+        }, 100);
+        
+        Utils.showMessage('✓ 明碼水印已移除', 'success');
+    } catch (error) {
+        console.error('移除水印時發生錯誤:', error);
+        Utils.showMessage('移除失敗: ' + error.message, 'error');
+    }
+}
+
+function resetWatermarkSettings() {
+    removeVisibleWatermark();
+    
+    setTimeout(() => {
+        document.getElementById('watermark_txt').value = '機密文件';
+        document.getElementById('target_area').value = 'preview_area';
+        document.getElementById('watermark_parent_node').value = 'preview_area';
+        document.getElementById('watermark_alpha').value = '0.15';
+        document.getElementById('alpha_value').textContent = '0.15';
+        document.getElementById('watermark_angle').value = '15';
+        document.getElementById('angle_value').textContent = '15°';
+        document.getElementById('watermark_font').value = '微軟雅黑';
+        document.getElementById('watermark_color').value = '#000000';
+        document.getElementById('watermark_color_text').value = '#000000';
+        document.getElementById('watermark_fontsize').value = '18px';
+        document.getElementById('watermark_width').value = '100';
+        document.getElementById('watermark_height').value = '100';
+        document.getElementById('watermark_x').value = '20';
+        document.getElementById('watermark_y').value = '20';
+        document.getElementById('watermark_rows').value = '0';
+        document.getElementById('watermark_cols').value = '0';
+        document.getElementById('watermark_x_space').value = '50';
+        document.getElementById('watermark_y_space').value = '50';
+        document.getElementById('monitor').checked = true;
+        updateParentNode();
+        
+        Utils.showMessage('✓ 已重置為預設值', 'success');
+    }, 300);
+}
+
+function applyInvisibleWatermark() {
+    const text = document.getElementById('invisible_text').value;
+    const targetArea = document.getElementById('target_area').value;
+    const targetElement = document.getElementById(targetArea);
+    
+    if (targetElement) {
+        WebpageWatermark.applyInvisible(text, `#${targetArea} p, #${targetArea} a`);
+        Utils.showMessage('✓ 隱碼水印已嵌入到: ' + targetArea, 'success');
+    } else {
+        Utils.showMessage('目標區域不存在', 'error');
+    }
+}
+
+function extractInvisibleWatermark() {
+    const extracted = WebpageWatermark.extractInvisible();
+    const resultDiv = document.getElementById('extracted_result');
+    
+    if (extracted) {
+        resultDiv.innerHTML = `
+            <div class="alert alert-success">
+                <strong>提取成功！</strong><br>
+                隱碼水印: <code>${extracted}</code>
+            </div>
+        `;
+    } else {
+        resultDiv.innerHTML = `
+            <div class="alert alert-warning">
+                未找到隱碼水印
+            </div>
+        `;
+    }
+}
+</script>
+{% endblock %}

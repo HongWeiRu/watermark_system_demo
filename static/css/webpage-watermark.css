@@ -1,0 +1,629 @@
+/* 網頁水印頁面專用樣式 */
+
+.webpage-watermark-container {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+}
+
+.page-header {
+    text-align: center;
+    color: white;
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.page-header .subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 1rem;
+}
+
+.back-link {
+    color: white;
+    text-decoration: none;
+    opacity: 0.9;
+    transition: opacity 0.3s;
+}
+
+.back-link:hover {
+    opacity: 1;
+    text-decoration: underline;
+}
+
+/* 主佈局 */
+.watermark-demo-layout {
+    display: grid;
+    grid-template-columns: 380px 1fr;
+    gap: 2rem;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* 控制面板 */
+.control-panel {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    overflow: hidden;
+    max-height: calc(100vh - 200px);
+    display: flex;
+    flex-direction: column;
+}
+
+.panel-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.panel-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.quick-actions {
+    display: flex;
+    gap: 0.4rem;
+}
+
+.btn-sm {
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    white-space: nowrap;
+}
+
+.btn-sm:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-1px);
+}
+
+.btn-sm:active {
+    transform: translateY(0);
+}
+
+.btn-sm .icon {
+    font-size: 0.9rem;
+    line-height: 1;
+}
+
+.btn-primary.btn-sm {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-primary.btn-sm:hover {
+    background: rgba(255, 255, 255, 0.3);
+    border-color: rgba(255, 255, 255, 0.45);
+}
+
+.btn-secondary.btn-sm {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.25);
+}
+
+.btn-secondary.btn-sm:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: rgba(255, 255, 255, 0.35);
+}
+
+.btn-outline.btn-sm {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.btn-outline.btn-sm:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.4);
+}
+
+.btn-icon {
+    background: rgba(255,255,255,0.2);
+    border: none;
+    color: white;
+    padding: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-icon:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+/* 標籤頁 */
+.panel-tabs {
+    display: flex;
+    background: #f7fafc;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    color: #718096;
+    transition: all 0.3s;
+    border-bottom: 3px solid transparent;
+}
+
+.tab-btn:hover {
+    background: #edf2f7;
+    color: #2d3748;
+}
+
+.tab-btn.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+    background: white;
+}
+
+.tab-content {
+    display: none;
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* 表單樣式 */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.label-text {
+    font-weight: 600;
+    color: #2d3748;
+    display: block;
+}
+
+.label-hint {
+    font-size: 0.85rem;
+    color: #718096;
+    font-weight: normal;
+    display: block;
+    margin-top: 0.25rem;
+}
+
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.form-group input[type="range"] {
+    width: 100%;
+    margin: 0.5rem 0;
+}
+
+.range-value {
+    display: inline-block;
+    margin-left: 0.5rem;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.color-input-group {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.color-input-group input[type="color"] {
+    width: 60px;
+    height: 40px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.color-input-group input[type="text"] {
+    flex: 1;
+}
+
+.unit {
+    margin-left: 0.5rem;
+    color: #718096;
+}
+
+/* 隱碼水印區 */
+.invisible-watermark-section {
+    border-top: 2px solid #e2e8f0;
+    padding: 1.5rem;
+    background: #f7fafc;
+}
+
+.invisible-watermark-section h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #2d3748;
+}
+
+.btn-group {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.result {
+    margin-top: 1rem;
+}
+
+/* 預覽面板 */
+.preview-panel {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.preview-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Yahoo 預覽樣式 */
+.yahoo-preview {
+    flex: 1;
+    overflow-y: auto;
+    background: #f5f5f5;
+    padding: 0;
+}
+
+.yahoo-header {
+    background: #6001d2;
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+}
+
+.yahoo-logo .yahoo-text {
+    font-size: 2rem;
+    font-weight: bold;
+    color: white;
+}
+
+.yahoo-search {
+    flex: 1;
+    display: flex;
+    gap: 0.5rem;
+    max-width: 500px;
+}
+
+.yahoo-search input {
+    flex: 1;
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.yahoo-search button {
+    padding: 0.75rem 1.5rem;
+    background: #ff6b00;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.yahoo-nav {
+    display: flex;
+    gap: 1.5rem;
+}
+
+.yahoo-nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.3s;
+}
+
+.yahoo-nav a:hover {
+    opacity: 0.8;
+}
+
+.yahoo-main {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.yahoo-content {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+}
+
+.news-section {
+    margin-bottom: 2rem;
+}
+
+.news-section h3 {
+    color: #6001d2;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.news-list {
+    list-style: none;
+    padding: 0;
+}
+
+.news-list li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.news-list li:last-child {
+    border-bottom: none;
+}
+
+.news-list a {
+    color: #2d3748;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+.news-list a:hover {
+    color: #6001d2;
+}
+
+.featured-section h3 {
+    color: #6001d2;
+    margin-bottom: 1rem;
+    font-size: 1.3rem;
+}
+
+.featured-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.featured-item {
+    background: #f7fafc;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s;
+}
+
+.featured-item:hover {
+    transform: translateY(-4px);
+}
+
+.featured-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.featured-item h4 {
+    padding: 1rem;
+    margin: 0;
+    font-size: 1rem;
+    color: #2d3748;
+}
+
+.featured-item p {
+    padding: 0 1rem 1rem;
+    margin: 0;
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+.yahoo-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.widget {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.widget h4 {
+    color: #6001d2;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.weather-info {
+    text-align: center;
+}
+
+.temp {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #2d3748;
+}
+
+.condition {
+    color: #718096;
+    margin-top: 0.5rem;
+}
+
+.stock-list,
+.trending-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.stock-list li,
+.trending-list li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+}
+
+.stock-list li:last-child,
+.trending-list li:last-child {
+    border-bottom: none;
+}
+
+.up {
+    color: #48bb78;
+    font-weight: 600;
+}
+
+.down {
+    color: #f56565;
+    font-weight: 600;
+}
+
+.trending-list li {
+    color: #6001d2;
+    font-weight: 500;
+}
+
+.yahoo-footer {
+    background: #2d3748;
+    color: white;
+    padding: 2rem;
+    text-align: center;
+}
+
+.footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.footer-links a {
+    color: white;
+    text-decoration: none;
+    opacity: 0.8;
+    transition: opacity 0.3s;
+}
+
+.footer-links a:hover {
+    opacity: 1;
+}
+
+.copyright {
+    opacity: 0.6;
+    font-size: 0.9rem;
+}
+
+/* 高亮效果 */
+.highlight-target {
+    outline: 4px solid #ff6b00 !important;
+    outline-offset: 4px;
+    animation: pulse 1s ease-in-out;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        outline-width: 4px;
+    }
+    50% {
+        outline-width: 8px;
+    }
+}
+
+/* 響應式設計 */
+@media (max-width: 1200px) {
+    .watermark-demo-layout {
+        grid-template-columns: 1fr;
+    }
+    
+    .control-panel {
+        max-height: none;
+    }
+    
+    .yahoo-main {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .webpage-watermark-container {
+        padding: 1rem;
+    }
+    
+    .yahoo-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .yahoo-search {
+        max-width: 100%;
+    }
+    
+    .yahoo-nav {
+        flex-wrap: wrap;
+    }
+}
+

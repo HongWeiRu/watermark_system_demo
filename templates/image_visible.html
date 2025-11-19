@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+
+{% block title %}圖像明碼水印 - 雙重水印系統{% endblock %}
+
+{% block content %}
+<div class="image-watermark-container">
+    <div class="page-header">
+        <h1>🖼️ 圖像明碼水印</h1>
+        <p class="subtitle">為圖像添加可見文字水印，支援單個或網格排列</p>
+        <a href="/" class="back-link">← 返回首頁</a>
+    </div>
+    
+    <div class="image-watermark-layout">
+        <!-- 左側控制面板 -->
+        <div class="control-panel">
+            <div class="panel-header">
+                <h2>⚙️ 水印設定</h2>
+                <div class="quick-actions">
+                    <button onclick="embedVisibleWatermark()" class="btn btn-primary btn-sm">
+                        <span class="icon">✓</span> 嵌入
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 文件上傳區 -->
+            <div class="upload-section">
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">選擇圖像</span>
+                        <span class="label-hint">支援 PNG, JPG, JPEG, BMP</span>
+                    </label>
+                    <input type="file" id="upload_image" accept="image/*" />
+                </div>
+            </div>
+            
+            <div class="panel-tabs">
+                <button class="tab-btn active" onclick="showTab('basic')">基本設定</button>
+                <button class="tab-btn" onclick="showTab('position')">位置設定</button>
+                <button class="tab-btn" onclick="showTab('style')">樣式設定</button>
+                <button class="tab-btn" onclick="showTab('advanced')">進階設定</button>
+            </div>
+            
+            <!-- 基本設定標籤頁 -->
+            <div id="tab-basic" class="tab-content active">
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">水印文字</span>
+                        <span class="label-hint">顯示在水印上的文字</span>
+                    </label>
+                    <input type="text" id="watermark_text" value="機密文件" placeholder="輸入水印文字" />
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">水印模式</span>
+                        <span class="label-hint">選擇單個或網格排列</span>
+                    </label>
+                    <select id="position_mode" onchange="togglePositionMode()">
+                        <option value="grid" selected>網格排列（多個水印）</option>
+                        <option value="single">單個水印</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="single_position_group" style="display: none;">
+                    <label>
+                        <span class="label-text">單個水印位置</span>
+                    </label>
+                    <select id="single_position">
+                        <option value="topleft">左上</option>
+                        <option value="topright">右上</option>
+                        <option value="center">中央</option>
+                        <option value="bottomleft">左下</option>
+                        <option value="bottomright" selected>右下</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">透明度</span>
+                        <span class="label-hint" id="opacity_value">50%</span>
+                    </label>
+                    <input type="range" id="opacity" min="0" max="100" value="50" />
+                </div>
+            </div>
+            
+            <!-- 位置設定標籤頁 -->
+            <div id="tab-position" class="tab-content">
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">起始 X 座標</span>
+                    </label>
+                    <input type="number" id="watermark_x" value="20" min="0" />
+                    <span class="unit">px</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">起始 Y 座標</span>
+                    </label>
+                    <input type="number" id="watermark_y" value="20" min="0" />
+                    <span class="unit">px</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">行數 (0=自動)</span>
+                        <span class="label-hint">網格排列的行數</span>
+                    </label>
+                    <input type="number" id="watermark_rows" value="0" min="0" />
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">列數 (0=自動)</span>
+                        <span class="label-hint">網格排列的列數</span>
+                    </label>
+                    <input type="number" id="watermark_cols" value="0" min="0" />
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">X 軸間隔</span>
+                    </label>
+                    <input type="number" id="watermark_x_space" value="50" min="0" />
+                    <span class="unit">px</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">Y 軸間隔</span>
+                    </label>
+                    <input type="number" id="watermark_y_space" value="50" min="0" />
+                    <span class="unit">px</span>
+                </div>
+            </div>
+            
+            <!-- 樣式設定標籤頁 -->
+            <div id="tab-style" class="tab-content">
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">字體</span>
+                    </label>
+                    <select id="watermark_font">
+                        <option value="微軟雅黑" selected>微軟雅黑</option>
+                        <option value="Arial">Arial</option>
+                        <option value="Times New Roman">Times New Roman</option>
+                        <option value="Courier New">Courier New</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">字體大小</span>
+                    </label>
+                    <input type="number" id="font_size" value="36" min="12" max="100" />
+                    <span class="unit">px</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">顏色</span>
+                    </label>
+                    <div class="color-input-group">
+                        <input type="color" id="color" value="#000000" />
+                        <input type="text" id="color_text" value="#000000" placeholder="#000000" />
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">旋轉角度</span>
+                        <span class="label-hint" id="angle_value">0°</span>
+                    </label>
+                    <input type="range" id="watermark_angle" min="-180" max="180" value="0" />
+                </div>
+            </div>
+            
+            <!-- 進階設定標籤頁 -->
+            <div id="tab-advanced" class="tab-content">
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">水印寬度 (留空=自動)</span>
+                    </label>
+                    <input type="number" id="watermark_width" value="" min="0" placeholder="自動" />
+                    <span class="unit">px</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <span class="label-text">水印高度 (留空=自動)</span>
+                    </label>
+                    <input type="number" id="watermark_height" value="" min="0" placeholder="自動" />
+                    <span class="unit">px</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 右側預覽區域 -->
+        <div class="preview-panel">
+            <div class="preview-header">
+                <h2>📄 圖像預覽</h2>
+            </div>
+            
+            <div class="preview-content">
+                <div id="image_preview" class="image-preview-placeholder">
+                    <div class="placeholder-content">
+                        <span class="placeholder-icon">📷</span>
+                        <p>請上傳圖像並嵌入水印</p>
+                    </div>
+                </div>
+                
+                <div id="preview_result" class="image-preview-result"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/css/image-watermark.css">
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 標籤頁切換
+function showTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    document.getElementById('tab-' + tabName).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// 更新透明度顯示
+document.getElementById('opacity').addEventListener('input', function() {
+    document.getElementById('opacity_value').textContent = this.value + '%';
+});
+
+// 更新角度顯示
+document.getElementById('watermark_angle').addEventListener('input', function() {
+    document.getElementById('angle_value').textContent = this.value + '°';
+});
+
+// 顏色同步
+document.getElementById('color').addEventListener('input', function() {
+    document.getElementById('color_text').value = this.value;
+});
+
+document.getElementById('color_text').addEventListener('input', function() {
+    if (/^#[0-9A-F]{6}$/i.test(this.value)) {
+        document.getElementById('color').value = this.value;
+    }
+});
+
+// 切換位置模式
+function togglePositionMode() {
+    const mode = document.getElementById('position_mode').value;
+    const singleGroup = document.getElementById('single_position_group');
+    if (mode === 'single') {
+        singleGroup.style.display = 'block';
+    } else {
+        singleGroup.style.display = 'none';
+    }
+}
+
+// 預覽上傳的圖像
+document.getElementById('upload_image').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        Utils.readFileAsDataURL(file).then(dataURL => {
+            const previewDiv = document.getElementById('image_preview');
+            previewDiv.innerHTML = `
+                <h3>原始圖像</h3>
+                <img src="${dataURL}" alt="原始圖像" class="preview-image" />
+            `;
+        });
+    }
+});
+
+async function embedVisibleWatermark() {
+    const fileInput = document.getElementById('upload_image');
+    const text = document.getElementById('watermark_text').value;
+    const positionMode = document.getElementById('position_mode').value;
+    const opacity = parseInt(document.getElementById('opacity').value);
+    const font_size = parseInt(document.getElementById('font_size').value);
+    const color = document.getElementById('color').value;
+    
+    if (!fileInput.files.length) {
+        Utils.showMessage('請選擇圖像', 'error');
+        return;
+    }
+    
+    if (!text) {
+        Utils.showMessage('請輸入水印文字', 'error');
+        return;
+    }
+    
+    try {
+        Utils.showMessage('正在嵌入水印...', 'info');
+        
+        const file = fileInput.files[0];
+        
+        const options = {
+            text: text,
+            opacity: opacity,
+            font_size: font_size,
+            color: color,
+            watermark_font: document.getElementById('watermark_font').value || '微軟雅黑',
+            watermark_angle: parseInt(document.getElementById('watermark_angle').value) || 0
+        };
+        
+        if (positionMode === 'single') {
+            options.position = document.getElementById('single_position').value;
+        } else {
+            options.position = 'grid';
+            options.watermark_x = parseInt(document.getElementById('watermark_x').value) || 20;
+            options.watermark_y = parseInt(document.getElementById('watermark_y').value) || 20;
+            options.watermark_rows = parseInt(document.getElementById('watermark_rows').value) || 0;
+            options.watermark_cols = parseInt(document.getElementById('watermark_cols').value) || 0;
+            options.watermark_x_space = parseInt(document.getElementById('watermark_x_space').value) || 50;
+            options.watermark_y_space = parseInt(document.getElementById('watermark_y_space').value) || 50;
+            
+            const width = document.getElementById('watermark_width').value;
+            const height = document.getElementById('watermark_height').value;
+            if (width) options.watermark_width = parseInt(width);
+            if (height) options.watermark_height = parseInt(height);
+        }
+        
+        const outputPath = await ImageWatermark.embedVisible(file, options);
+        
+        const resultDiv = document.getElementById('preview_result');
+        resultDiv.innerHTML = `
+            <div class="result-header">
+                <h3>✓ 帶明碼水印的圖像</h3>
+                <a href="${outputPath}" download class="btn btn-primary btn-sm">下載圖像</a>
+            </div>
+            <img src="${outputPath}" alt="帶水印圖像" class="preview-image" />
+        `;
+        
+        Utils.showMessage('✓ 明碼水印已嵌入!', 'success');
+        
+    } catch (error) {
+        Utils.showMessage('嵌入失敗: ' + error.message, 'error');
+    }
+}
+</script>
+{% endblock %}

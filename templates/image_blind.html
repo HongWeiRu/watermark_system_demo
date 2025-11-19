@@ -1,0 +1,408 @@
+{% extends "base.html" %}
+
+{% block title %}圖像隱碼水印 - 雙重水印系統{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>圖像隱碼水印</h1>
+    <a href="/" class="back-link">← 返回首頁</a>
+    
+    <div class="image-watermark-demo">
+        <div class="upload-section">
+            <h2>嵌入隱碼水印</h2>
+            
+            <div class="form-group">
+                <label>選擇圖像:</label>
+                <input type="file" id="embed_image" accept="image/*" />
+            </div>
+            
+            <div class="form-group">
+                <label>水印文字:</label>
+                <input type="text" id="watermark_text" value="SecretWatermark123" />
+            </div>
+            
+            <div class="form-group">
+                <label>圖像密碼:</label>
+                <input type="number" id="password_img" value="1" min="1" />
+            </div>
+            
+            <div class="form-group">
+                <label>水印密碼:</label>
+                <input type="number" id="password_wm" value="1" min="1" />
+            </div>
+            
+            <button onclick="embedBlindWatermark()" class="btn btn-primary">嵌入水印</button>
+            
+            <div id="embed_preview" class="image-preview"></div>
+        </div>
+        
+        <div class="extract-section">
+            <h2>提取隱碼水印</h2>
+            
+            <div class="form-group">
+                <label>選擇帶水印圖像:</label>
+                <input type="file" id="extract_image" accept="image/*" />
+            </div>
+            
+            <div class="form-group">
+                <label>水印長度 (位元):</label>
+                <input type="number" id="watermark_length" value="100" min="1" max="500" />
+            </div>
+            
+            <div class="form-group">
+                <label>圖像密碼:</label>
+                <input type="number" id="extract_password_img" value="1" min="1" />
+            </div>
+            
+            <div class="form-group">
+                <label>水印密碼:</label>
+                <input type="number" id="extract_password_wm" value="1" min="1" />
+            </div>
+            
+            <button onclick="extractBlindWatermark()" class="btn btn-success">提取水印</button>
+            
+            <div id="extract_result" class="result"></div>
+        </div>
+    </div>
+    
+    <!-- 攻擊測試區域 -->
+    <div class="attack-section" style="margin-top: 3rem;">
+        <h2>攻擊測試與魯棒性驗證</h2>
+        <p class="note" style="margin-bottom: 2rem;">測試隱碼水印對各種攻擊的抵抗能力</p>
+        
+        <div class="attack-controls">
+            <div class="form-group">
+                <label>選擇帶水印圖像（用於攻擊測試）:</label>
+                <input type="file" id="attack_image" accept="image/*" />
+            </div>
+            
+            <div class="attack-tabs">
+                <button class="attack-tab active" onclick="showAttackTab('cut')">裁剪+縮放</button>
+                <button class="attack-tab" onclick="showAttackTab('resize')">縮放</button>
+                <button class="attack-tab" onclick="showAttackTab('bright')">亮度</button>
+                <button class="attack-tab" onclick="showAttackTab('shelter')">遮擋</button>
+                <button class="attack-tab" onclick="showAttackTab('salt_pepper')">椒鹽噪聲</button>
+                <button class="attack-tab" onclick="showAttackTab('rot')">旋轉</button>
+            </div>
+            
+            <!-- 裁剪+縮放 -->
+            <div id="attack-cut" class="attack-panel active">
+                <h3>裁剪+縮放攻擊</h3>
+                <div class="form-group">
+                    <label>起始位置 X (比例 0-1):</label>
+                    <input type="number" id="cut_x1" value="0.1" min="0" max="1" step="0.1" />
+                </div>
+                <div class="form-group">
+                    <label>起始位置 Y (比例 0-1):</label>
+                    <input type="number" id="cut_y1" value="0.1" min="0" max="1" step="0.1" />
+                </div>
+                <div class="form-group">
+                    <label>結束位置 X (比例 0-1):</label>
+                    <input type="number" id="cut_x2" value="0.9" min="0" max="1" step="0.1" />
+                </div>
+                <div class="form-group">
+                    <label>結束位置 Y (比例 0-1):</label>
+                    <input type="number" id="cut_y2" value="0.9" min="0" max="1" step="0.1" />
+                </div>
+                <div class="form-group">
+                    <label>縮放比例 (可選，留空=不縮放):</label>
+                    <input type="number" id="cut_scale" value="" min="0.1" max="2" step="0.1" placeholder="例如: 0.8" />
+                </div>
+                <button onclick="applyAttack('cut')" class="btn btn-primary">應用攻擊</button>
+            </div>
+            
+            <!-- 縮放 -->
+            <div id="attack-resize" class="attack-panel">
+                <h3>縮放攻擊</h3>
+                <div class="form-group">
+                    <label>目標寬度:</label>
+                    <input type="number" id="resize_width" value="500" min="100" />
+                </div>
+                <div class="form-group">
+                    <label>目標高度:</label>
+                    <input type="number" id="resize_height" value="500" min="100" />
+                </div>
+                <button onclick="applyAttack('resize')" class="btn btn-primary">應用攻擊</button>
+            </div>
+            
+            <!-- 亮度 -->
+            <div id="attack-bright" class="attack-panel">
+                <h3>亮度調整攻擊</h3>
+                <div class="form-group">
+                    <label>亮度比例 (0.5=變暗50%, 1.5=變亮50%):</label>
+                    <input type="number" id="bright_ratio" value="0.8" min="0.1" max="2" step="0.1" />
+                </div>
+                <button onclick="applyAttack('bright')" class="btn btn-primary">應用攻擊</button>
+            </div>
+            
+            <!-- 遮擋 -->
+            <div id="attack-shelter" class="attack-panel">
+                <h3>遮擋攻擊</h3>
+                <div class="form-group">
+                    <label>遮擋塊大小比例 (0-1):</label>
+                    <input type="number" id="shelter_ratio" value="0.1" min="0.05" max="0.5" step="0.05" />
+                </div>
+                <div class="form-group">
+                    <label>遮擋塊數量:</label>
+                    <input type="number" id="shelter_n" value="3" min="1" max="10" />
+                </div>
+                <button onclick="applyAttack('shelter')" class="btn btn-primary">應用攻擊</button>
+            </div>
+            
+            <!-- 椒鹽噪聲 -->
+            <div id="attack-salt_pepper" class="attack-panel">
+                <h3>椒鹽噪聲攻擊</h3>
+                <div class="form-group">
+                    <label>噪聲比例 (0-1):</label>
+                    <input type="number" id="salt_ratio" value="0.01" min="0.001" max="0.1" step="0.001" />
+                </div>
+                <button onclick="applyAttack('salt_pepper')" class="btn btn-primary">應用攻擊</button>
+            </div>
+            
+            <!-- 旋轉 -->
+            <div id="attack-rot" class="attack-panel">
+                <h3>旋轉攻擊</h3>
+                <div class="form-group">
+                    <label>旋轉角度 (度，順時針):</label>
+                    <input type="number" id="rot_angle" value="45" min="-180" max="180" />
+                </div>
+                <button onclick="applyAttack('rot')" class="btn btn-primary">應用攻擊</button>
+            </div>
+            
+            <div id="attack_result" class="image-preview" style="margin-top: 2rem;"></div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let embeddedLength = 0;
+let currentAttackedImage = null;
+
+// 顯示攻擊標籤頁
+function showAttackTab(type) {
+    // 隱藏所有面板
+    document.querySelectorAll('.attack-panel').forEach(panel => {
+        panel.classList.remove('active');
+    });
+    
+    // 移除所有標籤的 active 類
+    document.querySelectorAll('.attack-tab').forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // 顯示選中的面板
+    document.getElementById('attack-' + type).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// 應用攻擊
+async function applyAttack(attackType) {
+    const fileInput = document.getElementById('attack_image');
+    
+    if (!fileInput.files.length) {
+        Utils.showMessage('請先選擇帶水印的圖像', 'error');
+        return;
+    }
+    
+    try {
+        Utils.showMessage('正在應用攻擊...', 'info');
+        
+        const file = fileInput.files[0];
+        let params = {};
+        
+        // 根據攻擊類型收集參數
+        if (attackType === 'cut') {
+            params = {
+                'loc_r_x1': document.getElementById('cut_x1').value,
+                'loc_r_y1': document.getElementById('cut_y1').value,
+                'loc_r_x2': document.getElementById('cut_x2').value,
+                'loc_r_y2': document.getElementById('cut_y2').value
+            };
+            const scale = document.getElementById('cut_scale').value;
+            if (scale) {
+                params['scale'] = scale;
+            }
+        } else if (attackType === 'resize') {
+            params = {
+                'width': document.getElementById('resize_width').value,
+                'height': document.getElementById('resize_height').value
+            };
+        } else if (attackType === 'bright') {
+            params = {
+                'ratio': document.getElementById('bright_ratio').value
+            };
+        } else if (attackType === 'shelter') {
+            params = {
+                'ratio': document.getElementById('shelter_ratio').value,
+                'n': document.getElementById('shelter_n').value
+            };
+        } else if (attackType === 'salt_pepper') {
+            params = {
+                'ratio': document.getElementById('salt_ratio').value
+            };
+        } else if (attackType === 'rot') {
+            params = {
+                'angle': document.getElementById('rot_angle').value
+            };
+        }
+        
+        const outputPath = await ImageWatermark.applyAttack(file, attackType, params);
+        currentAttackedImage = outputPath;
+        
+        const resultDiv = document.getElementById('attack_result');
+        resultDiv.innerHTML = `
+            <h3>攻擊後的圖像 (${getAttackTypeName(attackType)})</h3>
+            <img src="${outputPath}" alt="攻擊後圖像" style="max-width: 100%; border-radius: 8px; margin: 1rem 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
+            <div style="margin-top: 1rem;">
+                <a href="${outputPath}" download class="btn">下載攻擊後圖像</a>
+                <button onclick="extractFromAttacked()" class="btn btn-success" style="margin-left: 1rem;">從攻擊後圖像提取水印</button>
+            </div>
+            <p class="note" style="margin-top: 1rem;">點擊「從攻擊後圖像提取水印」來測試水印的魯棒性</p>
+        `;
+        
+        Utils.showMessage('攻擊測試完成!', 'success');
+        
+    } catch (error) {
+        Utils.showMessage('攻擊測試失敗: ' + error.message, 'error');
+    }
+}
+
+// 獲取攻擊類型中文名稱
+function getAttackTypeName(type) {
+    const names = {
+        'cut': '裁剪+縮放',
+        'resize': '縮放',
+        'bright': '亮度調整',
+        'shelter': '遮擋',
+        'salt_pepper': '椒鹽噪聲',
+        'rot': '旋轉'
+    };
+    return names[type] || type;
+}
+
+// 從攻擊後的圖像提取水印
+async function extractFromAttacked() {
+    if (!currentAttackedImage) {
+        Utils.showMessage('請先應用攻擊', 'error');
+        return;
+    }
+    
+    const length = parseInt(document.getElementById('watermark_length').value);
+    const password_img = parseInt(document.getElementById('extract_password_img').value);
+    const password_wm = parseInt(document.getElementById('extract_password_wm').value);
+    
+    if (!length || length <= 0) {
+        Utils.showMessage('請輸入有效的水印長度', 'error');
+        return;
+    }
+    
+    try {
+        Utils.showMessage('正在從攻擊後圖像提取水印...', 'info');
+        
+        // 下載攻擊後的圖像
+        const response = await fetch(currentAttackedImage);
+        const blob = await response.blob();
+        const file = new File([blob], 'attacked.png', { type: 'image/png' });
+        
+        const watermark = await ImageWatermark.extractBlind(file, length, password_img, password_wm);
+        
+        const resultDiv = document.getElementById('attack_result');
+        const existingContent = resultDiv.innerHTML;
+        resultDiv.innerHTML = existingContent + `
+            <div class="alert alert-success" style="margin-top: 1rem;">
+                <h4>從攻擊後圖像提取的水印:</h4>
+                <p class="extracted-text">${watermark}</p>
+                <p class="note">如果水印正確提取，說明該攻擊對水印的影響較小，水印具有較好的魯棒性。</p>
+            </div>
+        `;
+        
+        Utils.showMessage('提取成功!', 'success');
+        
+    } catch (error) {
+        Utils.showMessage('提取失敗: ' + error.message, 'error');
+    }
+}
+
+async function embedBlindWatermark() {
+    const fileInput = document.getElementById('embed_image');
+    const text = document.getElementById('watermark_text').value;
+    const password_img = parseInt(document.getElementById('password_img').value);
+    const password_wm = parseInt(document.getElementById('password_wm').value);
+    
+    if (!fileInput.files.length) {
+        Utils.showMessage('請選擇圖像', 'error');
+        return;
+    }
+    
+    if (!text) {
+        Utils.showMessage('請輸入水印文字', 'error');
+        return;
+    }
+    
+    try {
+        Utils.showMessage('正在嵌入水印...', 'info');
+        
+        const file = fileInput.files[0];
+        const result = await ImageWatermark.embedBlind(file, text, password_img, password_wm);
+        
+        embeddedLength = result.wm_length;
+        
+        const previewDiv = document.getElementById('embed_preview');
+        previewDiv.innerHTML = `
+            <h3>帶隱碼水印的圖像</h3>
+            <img src="${result.output_path}" alt="帶水印圖像" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+            <a href="${result.output_path}" download class="btn">下載圖像</a>
+            <p class="note">水印長度: ${embeddedLength} 位元 | 水印文字: ${text.length} 字元</p>
+        `;
+        
+        // 更新提取長度輸入框
+        document.getElementById('watermark_length').value = embeddedLength;
+        
+        Utils.showMessage('隱碼水印已嵌入!', 'success');
+        
+    } catch (error) {
+        Utils.showMessage('嵌入失敗: ' + error.message, 'error');
+    }
+}
+
+async function extractBlindWatermark() {
+    const fileInput = document.getElementById('extract_image');
+    const length = parseInt(document.getElementById('watermark_length').value);
+    const password_img = parseInt(document.getElementById('extract_password_img').value);
+    const password_wm = parseInt(document.getElementById('extract_password_wm').value);
+    
+    if (!fileInput.files.length) {
+        Utils.showMessage('請選擇圖像', 'error');
+        return;
+    }
+    
+    if (!length || length <= 0) {
+        Utils.showMessage('請輸入有效的水印長度', 'error');
+        return;
+    }
+    
+    try {
+        Utils.showMessage('正在提取水印...', 'info');
+        
+        const file = fileInput.files[0];
+        const watermark = await ImageWatermark.extractBlind(file, length, password_img, password_wm);
+        
+        const resultDiv = document.getElementById('extract_result');
+        resultDiv.innerHTML = `
+            <div class="alert alert-success">
+                <h4>提取的隱碼水印:</h4>
+                <p class="extracted-text">${watermark}</p>
+            </div>
+        `;
+        
+        Utils.showMessage('提取成功!', 'success');
+        
+    } catch (error) {
+        Utils.showMessage('提取失敗: ' + error.message, 'error');
+    }
+}
+</script>
+{% endblock %}
+

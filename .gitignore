@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Flask
+instance/
+.webassets-cache
+
+# 上傳和輸出文件
+static/uploads/*
+!static/uploads/.gitkeep
+output/*
+!output/.gitkeep
+
+# 日誌文件
+logs/*
+!logs/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 環境變數
+.env
+.env.local
+
+# 日誌
+*.log
+
