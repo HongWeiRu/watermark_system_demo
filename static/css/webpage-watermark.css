@@ -280,10 +280,72 @@
     color: #2d3748;
 }
 
+/* 隱碼水印區域的按鈕樣式（覆蓋 .btn-sm 的白色樣式） */
+.invisible-watermark-section .btn-sm {
+    background: #667eea !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.75rem 1rem !important;
+    font-size: 0.9rem !important;
+}
+
+.invisible-watermark-section .btn-sm.btn-primary {
+    background: #667eea !important;
+}
+
+.invisible-watermark-section .btn-sm.btn-primary:hover {
+    background: #5568d3 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.invisible-watermark-section .btn-sm.btn-success {
+    background: #48bb78 !important;
+}
+
+.invisible-watermark-section .btn-sm.btn-success:hover {
+    background: #38a169 !important;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(72, 187, 120, 0.3);
+}
+
 .btn-group {
     display: flex;
     gap: 0.5rem;
     margin-top: 1rem;
+}
+
+.btn-group .btn {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.9rem;
+}
+
+.btn-group .btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-group .btn-primary:hover {
+    background: #5568d3;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+.btn-group .btn-success {
+    background: #48bb78;
+    color: white;
+}
+
+.btn-group .btn-success:hover {
+    background: #38a169;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(72, 187, 120, 0.3);
 }
 
 .result {

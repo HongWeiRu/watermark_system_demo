@@ -77,12 +77,12 @@
             </div>
             
             <div class="attack-tabs">
-                <button class="attack-tab active" onclick="showAttackTab('cut')">裁剪+縮放</button>
-                <button class="attack-tab" onclick="showAttackTab('resize')">縮放</button>
-                <button class="attack-tab" onclick="showAttackTab('bright')">亮度</button>
-                <button class="attack-tab" onclick="showAttackTab('shelter')">遮擋</button>
-                <button class="attack-tab" onclick="showAttackTab('salt_pepper')">椒鹽噪聲</button>
-                <button class="attack-tab" onclick="showAttackTab('rot')">旋轉</button>
+                <button class="attack-tab active" onclick="showAttackTab('cut', this)">裁剪+縮放</button>
+                <button class="attack-tab" onclick="showAttackTab('resize', this)">縮放</button>
+                <button class="attack-tab" onclick="showAttackTab('bright', this)">亮度</button>
+                <button class="attack-tab" onclick="showAttackTab('shelter', this)">遮擋</button>
+                <button class="attack-tab" onclick="showAttackTab('salt_pepper', this)">椒鹽噪聲</button>
+                <button class="attack-tab" onclick="showAttackTab('rot', this)">旋轉</button>
             </div>
             
             <!-- 裁剪+縮放 -->
@@ -170,6 +170,28 @@
             </div>
             
             <div id="attack_result" class="image-preview" style="margin-top: 2rem;"></div>
+            
+            <!-- 提取參數設定（用於攻擊後提取） -->
+            <div class="extract-params-section" style="margin-top: 2rem; padding: 1.5rem; background: #f7fafc; border-radius: 8px;">
+                <h3>提取參數設定</h3>
+                <p class="note" style="margin-bottom: 1rem;">用於從攻擊後圖像提取水印的參數</p>
+                
+                <div class="form-group">
+                    <label>水印長度 (位元):</label>
+                    <input type="number" id="attack_watermark_length" value="100" min="1" max="500" />
+                    <span class="note">如果已嵌入水印，此值會自動更新</span>
+                </div>
+                
+                <div class="form-group">
+                    <label>圖像密碼:</label>
+                    <input type="number" id="attack_password_img" value="1" min="1" />
+                </div>
+                
+                <div class="form-group">
+                    <label>水印密碼:</label>
+                    <input type="number" id="attack_password_wm" value="1" min="1" />
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -181,7 +203,7 @@ let embeddedLength = 0;
 let currentAttackedImage = null;
 
 // 顯示攻擊標籤頁
-function showAttackTab(type) {
+function showAttackTab(type, element) {
     // 隱藏所有面板
     document.querySelectorAll('.attack-panel').forEach(panel => {
         panel.classList.remove('active');
@@ -194,7 +216,11 @@ function showAttackTab(type) {
     
     // 顯示選中的面板
     document.getElementById('attack-' + type).classList.add('active');
-    event.target.classList.add('active');
+    
+    // 設置按鈕為 active 狀態
+    if (element) {
+        element.classList.add('active');
+    }
 }
 
 // 應用攻擊
@@ -289,9 +315,26 @@ async function extractFromAttacked() {
         return;
     }
     
-    const length = parseInt(document.getElementById('watermark_length').value);
-    const password_img = parseInt(document.getElementById('extract_password_img').value);
-    const password_wm = parseInt(document.getElementById('extract_password_wm').value);
+    // 優先使用攻擊測試區域的參數，如果沒有則使用提取區域的參數
+    let length = parseInt(document.getElementById('attack_watermark_length')?.value);
+    let password_img = parseInt(document.getElementById('attack_password_img')?.value);
+    let password_wm = parseInt(document.getElementById('attack_password_wm')?.value);
+    
+    // 如果攻擊測試區域沒有值，則使用提取區域的值
+    if (!length || length <= 0) {
+        length = parseInt(document.getElementById('watermark_length')?.value);
+    }
+    if (!password_img || password_img <= 0) {
+        password_img = parseInt(document.getElementById('extract_password_img')?.value || '1');
+    }
+    if (!password_wm || password_wm <= 0) {
+        password_wm = parseInt(document.getElementById('extract_password_wm')?.value || '1');
+    }
+    
+    // 如果還是沒有，使用嵌入時保存的值
+    if (!length || length <= 0) {
+        length = embeddedLength || 100;
+    }
     
     if (!length || length <= 0) {
         Utils.showMessage('請輸入有效的水印長度', 'error');
@@ -313,7 +356,8 @@ async function extractFromAttacked() {
         resultDiv.innerHTML = existingContent + `
             <div class="alert alert-success" style="margin-top: 1rem;">
                 <h4>從攻擊後圖像提取的水印:</h4>
-                <p class="extracted-text">${watermark}</p>
+                <p class="extracted-text" style="word-break: break-all; font-family: monospace; background: #f0f0f0; padding: 0.5rem; border-radius: 4px;">${watermark}</p>
+                <p class="note" style="margin-top: 0.5rem;">使用的參數: 長度=${length}, 圖像密碼=${password_img}, 水印密碼=${password_wm}</p>
                 <p class="note">如果水印正確提取，說明該攻擊對水印的影響較小，水印具有較好的魯棒性。</p>
             </div>
         `;
@@ -322,6 +366,7 @@ async function extractFromAttacked() {
         
     } catch (error) {
         Utils.showMessage('提取失敗: ' + error.message, 'error');
+        console.error('提取錯誤詳情:', error);
     }
 }
 
@@ -349,18 +394,27 @@ async function embedBlindWatermark() {
         
         embeddedLength = result.wm_length;
         
+        // 自動更新提取區域和攻擊測試區域的水印長度
+        const lengthInput = document.getElementById('watermark_length');
+        const attackLengthInput = document.getElementById('attack_watermark_length');
+        if (lengthInput) lengthInput.value = embeddedLength;
+        if (attackLengthInput) attackLengthInput.value = embeddedLength;
+        
+        // 自動更新攻擊測試區域的密碼
+        const attackPasswordImg = document.getElementById('attack_password_img');
+        const attackPasswordWm = document.getElementById('attack_password_wm');
+        if (attackPasswordImg) attackPasswordImg.value = password_img;
+        if (attackPasswordWm) attackPasswordWm.value = password_wm;
+        
         const previewDiv = document.getElementById('embed_preview');
         previewDiv.innerHTML = `
             <h3>帶隱碼水印的圖像</h3>
             <img src="${result.output_path}" alt="帶水印圖像" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
             <a href="${result.output_path}" download class="btn">下載圖像</a>
-            <p class="note">水印長度: ${embeddedLength} 位元 | 水印文字: ${text.length} 字元</p>
+            <p class="note" style="margin-top: 0.5rem;">水印長度: ${embeddedLength} 位元 | 圖像密碼: ${password_img} | 水印密碼: ${password_wm}</p>
         `;
         
-        // 更新提取長度輸入框
-        document.getElementById('watermark_length').value = embeddedLength;
-        
-        Utils.showMessage('隱碼水印已嵌入!', 'success');
+        Utils.showMessage('隱碼水印已嵌入! 參數已自動同步到攻擊測試區域', 'success');
         
     } catch (error) {
         Utils.showMessage('嵌入失敗: ' + error.message, 'error');

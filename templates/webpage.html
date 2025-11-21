@@ -29,9 +29,9 @@
             </div>
             
             <div class="panel-tabs">
-                <button class="tab-btn active" onclick="showTab('basic')">基本設定</button>
-                <button class="tab-btn" onclick="showTab('style')">樣式設定</button>
-                <button class="tab-btn" onclick="showTab('advanced')">進階設定</button>
+                <button class="tab-btn active" onclick="showTab('basic', this)">基本設定</button>
+                <button class="tab-btn" onclick="showTab('style', this)">樣式設定</button>
+                <button class="tab-btn" onclick="showTab('advanced', this)">進階設定</button>
             </div>
             
             <!-- 基本設定標籤頁 -->
@@ -330,7 +330,7 @@
 {% block extra_js %}
 <script>
 // 標籤頁切換
-function showTab(tabName) {
+function showTab(tabName, element) {
     // 隱藏所有標籤內容
     document.querySelectorAll('.tab-content').forEach(tab => {
         tab.classList.remove('active');
@@ -343,7 +343,18 @@ function showTab(tabName) {
     
     // 顯示選中的標籤
     document.getElementById('tab-' + tabName).classList.add('active');
-    event.target.classList.add('active');
+    
+    // 設置按鈕為 active 狀態
+    if (element) {
+        element.classList.add('active');
+    } else {
+        // 如果沒有傳入 element，通過查找對應的按鈕
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            if (btn.textContent.trim().includes(tabName === 'basic' ? '基本' : tabName === 'style' ? '樣式' : '進階')) {
+                btn.classList.add('active');
+            }
+        });
+    }
 }
 
 // 更新透明度顯示
