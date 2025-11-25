@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}網頁水印 - 雙重水印系統{% endblock %}
+{% block title %}網頁浮水印 - 雙重浮水印系統{% endblock %}
 
 {% block content %}
 <div class="webpage-watermark-container">
     <div class="page-header">
-        <h1>🌐 網頁水印系統</h1>
-        <p class="subtitle">為網頁內容添加明碼與隱碼雙重水印保護</p>
+        <h1>🌐 網頁浮水印系統</h1>
+        <p class="subtitle">為網頁內容添加明碼與隱碼雙重浮水印保護</p>
         <a href="/" class="back-link">← 返回首頁</a>
     </div>
     
@@ -14,7 +14,7 @@
         <!-- 左側控制面板 -->
         <div class="control-panel">
             <div class="panel-header">
-                <h2>⚙️ 水印設定</h2>
+                <h2>⚙️ 浮水印設定</h2>
                 <div class="quick-actions">
                     <button onclick="applyVisibleWatermark()" class="btn btn-primary btn-sm">
                         <span class="icon">✓</span> 套用
@@ -38,16 +38,16 @@
             <div id="tab-basic" class="tab-content active">
                 <div class="form-group">
                     <label>
-                        <span class="label-text">水印文字</span>
-                        <span class="label-hint">顯示在水印上的文字</span>
+                        <span class="label-text">浮水印文字</span>
+                        <span class="label-hint">顯示在浮水印上的文字</span>
                     </label>
-                    <input type="text" id="watermark_txt" value="機密文件" placeholder="輸入水印文字" />
+                    <input type="text" id="watermark_txt" value="機密文件" placeholder="輸入浮水印文字" />
                 </div>
                 
                 <div class="form-group">
                     <label>
                         <span class="label-text">目標區域</span>
-                        <span class="label-hint">選擇要應用水印的區域</span>
+                        <span class="label-hint">選擇要應用浮水印的區域</span>
                     </label>
                     <select id="target_area" onchange="updateParentNode()">
                         <option value="preview_area">整個預覽區域</option>
@@ -78,7 +78,7 @@
                 <div class="form-group">
                     <label>
                         <span class="label-text">旋轉角度</span>
-                        <span class="label-hint">水印旋轉角度（度）</span>
+                        <span class="label-hint">浮水印旋轉角度（度）</span>
                     </label>
                     <input type="range" id="watermark_angle" min="-180" max="180" value="15" />
                     <span class="range-value" id="angle_value">15°</span>
@@ -108,7 +108,7 @@
                 
                 <div class="form-group">
                     <label>
-                        <span class="label-text">顏色</span>
+                        <span class="label-text">浮水印顏色</span>
                     </label>
                     <div class="color-input-group">
                         <input type="color" id="watermark_color" value="#000000" />
@@ -118,7 +118,7 @@
                 
                 <div class="form-group">
                     <label>
-                        <span class="label-text">水印寬度</span>
+                        <span class="label-text">浮水印寬度</span>
                     </label>
                     <input type="number" id="watermark_width" value="100" min="0" />
                     <span class="unit">px</span>
@@ -126,7 +126,7 @@
                 
                 <div class="form-group">
                     <label>
-                        <span class="label-text">水印高度</span>
+                        <span class="label-text">浮水印高度</span>
                     </label>
                     <input type="number" id="watermark_height" value="100" min="0" />
                     <span class="unit">px</span>
@@ -189,9 +189,9 @@
                 </div>
             </div>
             
-            <!-- 隱碼水印區 -->
+            <!-- 隱碼浮水印區 -->
             <div class="invisible-watermark-section">
-                <h3>🔐 隱碼水印</h3>
+                <h3>🔐 隱碼浮水印</h3>
                 <div class="form-group">
                     <label>
                         <span class="label-text">隱藏文字</span>
@@ -448,7 +448,7 @@ function applyVisibleWatermark() {
     };
     
     WebpageWatermark.applyVisible(config);
-    Utils.showMessage('✓ 明碼水印已套用到: ' + (parentNode || '整個頁面'), 'success');
+        Utils.showMessage('✓ 明碼浮水印已套用到: ' + (parentNode || '整個頁面'), 'success');
 }
 
 function removeVisibleWatermark() {
@@ -472,9 +472,9 @@ function removeVisibleWatermark() {
             document.querySelectorAll(`#${watermarkId}, [id^="${watermarkPrefix}"]`).forEach(el => el.remove());
         }, 100);
         
-        Utils.showMessage('✓ 明碼水印已移除', 'success');
+        Utils.showMessage('✓ 明碼浮水印已移除', 'success');
     } catch (error) {
-        console.error('移除水印時發生錯誤:', error);
+        console.error('移除浮水印時發生錯誤:', error);
         Utils.showMessage('移除失敗: ' + error.message, 'error');
     }
 }
@@ -516,7 +516,7 @@ function applyInvisibleWatermark() {
     
     if (targetElement) {
         WebpageWatermark.applyInvisible(text, `#${targetArea} p, #${targetArea} a`);
-        Utils.showMessage('✓ 隱碼水印已嵌入到: ' + targetArea, 'success');
+        Utils.showMessage('✓ 隱碼浮水印已嵌入到: ' + targetArea, 'success');
     } else {
         Utils.showMessage('目標區域不存在', 'error');
     }
@@ -530,13 +530,13 @@ function extractInvisibleWatermark() {
         resultDiv.innerHTML = `
             <div class="alert alert-success">
                 <strong>提取成功！</strong><br>
-                隱碼水印: <code>${extracted}</code>
+                隱碼浮水印: <code>${extracted}</code>
             </div>
         `;
     } else {
         resultDiv.innerHTML = `
             <div class="alert alert-warning">
-                未找到隱碼水印
+                未找到隱碼浮水印
             </div>
         `;
     }

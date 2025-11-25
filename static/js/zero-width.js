@@ -1,6 +1,6 @@
 /**
- * 零寬字符水印引擎
- * 用於網頁文本隱碼水印
+ * 零寬字符浮水印引擎
+ * 用於網頁文本隱碼浮水印
  */
 class ZeroWidthWatermark {
   constructor() {
@@ -61,9 +61,9 @@ class ZeroWidthWatermark {
   }
   
   /**
-   * 將水印嵌入到網頁元素中
+   * 將浮水印嵌入到網頁元素中
    * @param {string} selector - CSS 選擇器
-   * @param {string} watermark - 水印文字
+   * @param {string} watermark - 浮水印文字
    */
   embedIntoPage(selector, watermark) {
     const encoded = this.encode(watermark);
@@ -78,8 +78,8 @@ class ZeroWidthWatermark {
   }
   
   /**
-   * 從網頁中提取水印
-   * @returns {string} - 提取的水印文字
+   * 從網頁中提取浮水印
+   * @returns {string} - 提取的浮水印文字
    */
   extractFromPage() {
     const bodyText = document.body.innerText;
@@ -87,10 +87,10 @@ class ZeroWidthWatermark {
   }
   
   /**
-   * 將水印嵌入到 HTML 字符串中
+   * 將浮水印嵌入到 HTML 字符串中
    * @param {string} html - 原始 HTML
-   * @param {string} watermark - 水印文字
-   * @returns {string} - 帶水印的 HTML
+   * @param {string} watermark - 浮水印文字
+   * @returns {string} - 帶浮水印的 HTML
    */
   embedIntoHTML(html, watermark) {
     const encoded = this.encode(watermark);
@@ -99,9 +99,9 @@ class ZeroWidthWatermark {
   }
   
   /**
-   * 從 HTML 字符串中提取水印
-   * @param {string} html - 帶水印的 HTML
-   * @returns {string} - 水印文字
+   * 從 HTML 字符串中提取浮水印
+   * @param {string} html - 帶浮水印的 HTML
+   * @returns {string} - 浮水印文字
    */
   extractFromHTML(html) {
     return this.decode(html);

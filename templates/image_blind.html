@@ -1,15 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}圖像隱碼水印 - 雙重水印系統{% endblock %}
+{% block title %}圖像隱碼浮水印 - 雙重浮水印系統{% endblock %}
 
 {% block content %}
 <div class="container">
-    <h1>圖像隱碼水印</h1>
+    <h1>圖像隱碼浮水印</h1>
     <a href="/" class="back-link">← 返回首頁</a>
     
     <div class="image-watermark-demo">
         <div class="upload-section">
-            <h2>嵌入隱碼水印</h2>
+            <h2>嵌入隱碼浮水印</h2>
             
             <div class="form-group">
                 <label>選擇圖像:</label>
@@ -17,7 +17,7 @@
             </div>
             
             <div class="form-group">
-                <label>水印文字:</label>
+                <label>浮水印文字:</label>
                 <input type="text" id="watermark_text" value="SecretWatermark123" />
             </div>
             
@@ -27,25 +27,25 @@
             </div>
             
             <div class="form-group">
-                <label>水印密碼:</label>
+                <label>浮水印密碼:</label>
                 <input type="number" id="password_wm" value="1" min="1" />
             </div>
             
-            <button onclick="embedBlindWatermark()" class="btn btn-primary">嵌入水印</button>
+            <button onclick="embedBlindWatermark()" class="btn btn-primary">嵌入浮水印</button>
             
             <div id="embed_preview" class="image-preview"></div>
         </div>
         
         <div class="extract-section">
-            <h2>提取隱碼水印</h2>
+            <h2>提取隱碼浮水印</h2>
             
             <div class="form-group">
-                <label>選擇帶水印圖像:</label>
+                <label>選擇帶浮水印圖像:</label>
                 <input type="file" id="extract_image" accept="image/*" />
             </div>
             
             <div class="form-group">
-                <label>水印長度 (位元):</label>
+                <label>浮水印長度 (位元):</label>
                 <input type="number" id="watermark_length" value="100" min="1" max="500" />
             </div>
             
@@ -55,11 +55,11 @@
             </div>
             
             <div class="form-group">
-                <label>水印密碼:</label>
+                <label>浮水印密碼:</label>
                 <input type="number" id="extract_password_wm" value="1" min="1" />
             </div>
             
-            <button onclick="extractBlindWatermark()" class="btn btn-success">提取水印</button>
+            <button onclick="extractBlindWatermark()" class="btn btn-success">提取浮水印</button>
             
             <div id="extract_result" class="result"></div>
         </div>
@@ -68,11 +68,11 @@
     <!-- 攻擊測試區域 -->
     <div class="attack-section" style="margin-top: 3rem;">
         <h2>攻擊測試與魯棒性驗證</h2>
-        <p class="note" style="margin-bottom: 2rem;">測試隱碼水印對各種攻擊的抵抗能力</p>
+        <p class="note" style="margin-bottom: 2rem;">測試隱碼浮水印對各種攻擊的抵抗能力</p>
         
         <div class="attack-controls">
             <div class="form-group">
-                <label>選擇帶水印圖像（用於攻擊測試）:</label>
+                <label>選擇帶浮水印圖像（用於攻擊測試）:</label>
                 <input type="file" id="attack_image" accept="image/*" />
             </div>
             
@@ -174,12 +174,12 @@
             <!-- 提取參數設定（用於攻擊後提取） -->
             <div class="extract-params-section" style="margin-top: 2rem; padding: 1.5rem; background: #f7fafc; border-radius: 8px;">
                 <h3>提取參數設定</h3>
-                <p class="note" style="margin-bottom: 1rem;">用於從攻擊後圖像提取水印的參數</p>
+                <p class="note" style="margin-bottom: 1rem;">用於從攻擊後圖像提取浮水印的參數</p>
                 
                 <div class="form-group">
-                    <label>水印長度 (位元):</label>
+                    <label>浮水印長度 (位元):</label>
                     <input type="number" id="attack_watermark_length" value="100" min="1" max="500" />
-                    <span class="note">如果已嵌入水印，此值會自動更新</span>
+                    <span class="note">如果已嵌入浮水印，此值會自動更新</span>
                 </div>
                 
                 <div class="form-group">
@@ -188,7 +188,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <label>水印密碼:</label>
+                    <label>浮水印密碼:</label>
                     <input type="number" id="attack_password_wm" value="1" min="1" />
                 </div>
             </div>
@@ -228,7 +228,7 @@ async function applyAttack(attackType) {
     const fileInput = document.getElementById('attack_image');
     
     if (!fileInput.files.length) {
-        Utils.showMessage('請先選擇帶水印的圖像', 'error');
+        Utils.showMessage('請先選擇帶浮水印的圖像', 'error');
         return;
     }
     
@@ -283,9 +283,9 @@ async function applyAttack(attackType) {
             <img src="${outputPath}" alt="攻擊後圖像" style="max-width: 100%; border-radius: 8px; margin: 1rem 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1);" />
             <div style="margin-top: 1rem;">
                 <a href="${outputPath}" download class="btn">下載攻擊後圖像</a>
-                <button onclick="extractFromAttacked()" class="btn btn-success" style="margin-left: 1rem;">從攻擊後圖像提取水印</button>
+                <button onclick="extractFromAttacked()" class="btn btn-success" style="margin-left: 1rem;">從攻擊後圖像提取浮水印</button>
             </div>
-            <p class="note" style="margin-top: 1rem;">點擊「從攻擊後圖像提取水印」來測試水印的魯棒性</p>
+            <p class="note" style="margin-top: 1rem;">點擊「從攻擊後圖像提取浮水印」來測試浮水印的魯棒性</p>
         `;
         
         Utils.showMessage('攻擊測試完成!', 'success');
@@ -308,7 +308,7 @@ function getAttackTypeName(type) {
     return names[type] || type;
 }
 
-// 從攻擊後的圖像提取水印
+// 從攻擊後的圖像提取浮水印
 async function extractFromAttacked() {
     if (!currentAttackedImage) {
         Utils.showMessage('請先應用攻擊', 'error');
@@ -337,12 +337,12 @@ async function extractFromAttacked() {
     }
     
     if (!length || length <= 0) {
-        Utils.showMessage('請輸入有效的水印長度', 'error');
+        Utils.showMessage('請輸入有效的浮水印長度', 'error');
         return;
     }
     
     try {
-        Utils.showMessage('正在從攻擊後圖像提取水印...', 'info');
+        Utils.showMessage('正在從攻擊後圖像提取浮水印...', 'info');
         
         // 下載攻擊後的圖像
         const response = await fetch(currentAttackedImage);
@@ -355,10 +355,10 @@ async function extractFromAttacked() {
         const existingContent = resultDiv.innerHTML;
         resultDiv.innerHTML = existingContent + `
             <div class="alert alert-success" style="margin-top: 1rem;">
-                <h4>從攻擊後圖像提取的水印:</h4>
+                <h4>從攻擊後圖像提取的浮水印:</h4>
                 <p class="extracted-text" style="word-break: break-all; font-family: monospace; background: #f0f0f0; padding: 0.5rem; border-radius: 4px;">${watermark}</p>
-                <p class="note" style="margin-top: 0.5rem;">使用的參數: 長度=${length}, 圖像密碼=${password_img}, 水印密碼=${password_wm}</p>
-                <p class="note">如果水印正確提取，說明該攻擊對水印的影響較小，水印具有較好的魯棒性。</p>
+                <p class="note" style="margin-top: 0.5rem;">使用的參數: 長度=${length}, 圖像密碼=${password_img}, 浮水印密碼=${password_wm}</p>
+                <p class="note">如果浮水印正確提取，說明該攻擊對浮水印的影響較小，浮水印具有較好的魯棒性。</p>
             </div>
         `;
         
@@ -382,19 +382,19 @@ async function embedBlindWatermark() {
     }
     
     if (!text) {
-        Utils.showMessage('請輸入水印文字', 'error');
+        Utils.showMessage('請輸入浮水印文字', 'error');
         return;
     }
     
     try {
-        Utils.showMessage('正在嵌入水印...', 'info');
+        Utils.showMessage('正在嵌入浮水印...', 'info');
         
         const file = fileInput.files[0];
         const result = await ImageWatermark.embedBlind(file, text, password_img, password_wm);
         
         embeddedLength = result.wm_length;
         
-        // 自動更新提取區域和攻擊測試區域的水印長度
+        // 自動更新提取區域和攻擊測試區域的浮水印長度
         const lengthInput = document.getElementById('watermark_length');
         const attackLengthInput = document.getElementById('attack_watermark_length');
         if (lengthInput) lengthInput.value = embeddedLength;
@@ -408,13 +408,13 @@ async function embedBlindWatermark() {
         
         const previewDiv = document.getElementById('embed_preview');
         previewDiv.innerHTML = `
-            <h3>帶隱碼水印的圖像</h3>
-            <img src="${result.output_path}" alt="帶水印圖像" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
+            <h3>帶隱碼浮水印的圖像</h3>
+            <img src="${result.output_path}" alt="帶浮水印圖像" style="max-width: 100%; border-radius: 8px; margin: 1rem 0;" />
             <a href="${result.output_path}" download class="btn">下載圖像</a>
-            <p class="note" style="margin-top: 0.5rem;">水印長度: ${embeddedLength} 位元 | 圖像密碼: ${password_img} | 水印密碼: ${password_wm}</p>
+            <p class="note" style="margin-top: 0.5rem;">浮水印長度: ${embeddedLength} 位元 | 圖像密碼: ${password_img} | 浮水印密碼: ${password_wm}</p>
         `;
         
-        Utils.showMessage('隱碼水印已嵌入! 參數已自動同步到攻擊測試區域', 'success');
+        Utils.showMessage('隱碼浮水印已嵌入! 參數已自動同步到攻擊測試區域', 'success');
         
     } catch (error) {
         Utils.showMessage('嵌入失敗: ' + error.message, 'error');
@@ -433,12 +433,12 @@ async function extractBlindWatermark() {
     }
     
     if (!length || length <= 0) {
-        Utils.showMessage('請輸入有效的水印長度', 'error');
+        Utils.showMessage('請輸入有效的浮水印長度', 'error');
         return;
     }
     
     try {
-        Utils.showMessage('正在提取水印...', 'info');
+        Utils.showMessage('正在提取浮水印...', 'info');
         
         const file = fileInput.files[0];
         const watermark = await ImageWatermark.extractBlind(file, length, password_img, password_wm);
@@ -446,7 +446,7 @@ async function extractBlindWatermark() {
         const resultDiv = document.getElementById('extract_result');
         resultDiv.innerHTML = `
             <div class="alert alert-success">
-                <h4>提取的隱碼水印:</h4>
+                <h4>提取的隱碼浮水印:</h4>
                 <p class="extracted-text">${watermark}</p>
             </div>
         `;

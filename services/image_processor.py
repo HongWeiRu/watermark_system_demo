@@ -18,12 +18,12 @@ class ImageProcessor:
                              watermark_angle=0, watermark_font='微軟雅黑',
                              watermark_width=None, watermark_height=None):
         """
-        添加明碼文字水印（支援多個水印網格排列）
+        添加明碼文字浮水印（支援多個浮水印網格排列）
         
         Args:
             input_path (str): 輸入圖像路徑
             output_path (str): 輸出圖像路徑
-            text (str): 水印文字
+            text (str): 浮水印文字
             position (str): 位置模式 (single: 單個位置, grid: 網格)
             opacity (int): 透明度 (0-100)
             font_size (int): 字體大小
@@ -36,8 +36,8 @@ class ImageProcessor:
             watermark_y_space (int): Y 軸間隔
             watermark_angle (int): 旋轉角度 (度)
             watermark_font (str): 字體名稱
-            watermark_width (int): 水印寬度 (None=自動)
-            watermark_height (int): 水印高度 (None=自動)
+            watermark_width (int): 浮水印寬度 (None=自動)
+            watermark_height (int): 浮水印高度 (None=自動)
         """
         # 開啟圖像
         image = Image.open(input_path).convert('RGBA')
@@ -64,16 +64,16 @@ class ImageProcessor:
         alpha = int(255 * opacity / 100)
         text_color = (*rgb, alpha)
         
-        # 判斷是單個水印還是網格水印
+        # 判斷是單個浮水印還是網格浮水印
         if position in ['topleft', 'topright', 'center', 'bottomleft', 'bottomright']:
-            # 單個水印模式（向後兼容）
+            # 單個浮水印模式（向後兼容）
             x, y = self._calculate_position(
                 position, img_width, img_height, 
                 text_width, text_height
             )
             self._draw_watermark_text(watermark_layer, draw, text, x, y, font, text_color, watermark_angle, text_width, text_height)
         else:
-            # 網格水印模式
+            # 網格浮水印模式
             # 計算可用的空間
             available_width = img_width - watermark_x
             available_height = img_height - watermark_y
@@ -84,7 +84,7 @@ class ImageProcessor:
             if watermark_rows == 0:
                 watermark_rows = max(1, int((available_height) / (wm_height + watermark_y_space)))
             
-            # 繪製網格水印
+            # 繪製網格浮水印
             for row in range(watermark_rows):
                 for col in range(watermark_cols):
                     x = watermark_x + col * (wm_width + watermark_x_space)
@@ -102,7 +102,7 @@ class ImageProcessor:
         watermarked.save(output_path)
     
     def _draw_watermark_text(self, watermark_layer, draw, text, x, y, font, color, angle, text_width, text_height):
-        """繪製帶旋轉的水印文字"""
+        """繪製帶旋轉的浮水印文字"""
         if angle == 0:
             # 無旋轉，直接繪製
             draw.text((x, y), text, font=font, fill=color)
@@ -130,7 +130,7 @@ class ImageProcessor:
             paste_x = center_x - temp_size // 2
             paste_y = center_y - temp_size // 2
             
-            # 將旋轉後的圖像合成到水印圖層
+            # 將旋轉後的圖像合成到浮水印圖層
             watermark_layer.paste(rotated, (paste_x, paste_y), rotated)
     
     def _get_font(self, font_size, font_name=None):
@@ -175,7 +175,7 @@ class ImageProcessor:
     
     def _calculate_position(self, position, img_width, img_height, 
                            text_width, text_height):
-        """計算水印位置"""
+        """計算浮水印位置"""
         padding = 20
         
         positions = {

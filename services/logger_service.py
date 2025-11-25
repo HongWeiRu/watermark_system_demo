@@ -41,9 +41,9 @@ class LoggerService:
         
         Args:
             operation_type (str): 操作類型
-                - 'embed_visible': 嵌入明碼水印
-                - 'embed_blind': 嵌入隱碼水印
-                - 'extract_blind': 提取隱碼水印
+                - 'embed_visible': 嵌入明碼浮水印
+                - 'embed_blind': 嵌入隱碼浮水印
+                - 'extract_blind': 提取隱碼浮水印
                 - 'attack': 攻擊測試
                 - 'error': 錯誤
                 - 'page_view': 頁面訪問

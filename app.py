@@ -1,6 +1,6 @@
 """
 Flask 主應用
-雙重水印系統
+雙重浮水印系統
 """
 from flask import Flask, render_template, request, jsonify, send_file
 from flask_cors import CORS
@@ -106,21 +106,21 @@ def index():
 
 @app.route('/webpage')
 def webpage_watermark():
-    """網頁水印展示頁"""
+    """網頁浮水印展示頁"""
     logger_service.log_page_view('webpage', request)
     return render_template('webpage.html')
 
 
 @app.route('/image-visible')
 def image_visible_watermark():
-    """圖像明碼水印頁"""
+    """圖像明碼浮水印頁"""
     logger_service.log_page_view('image_visible', request)
     return render_template('image_visible.html')
 
 
 @app.route('/image-blind')
 def image_blind_watermark():
-    """圖像隱碼水印頁"""
+    """圖像隱碼浮水印頁"""
     logger_service.log_page_view('image_blind', request)
     return render_template('image_blind.html')
 
@@ -131,11 +131,11 @@ def image_blind_watermark():
 @log_api_call('embed_visible')
 def embed_visible_watermark():
     """
-    嵌入明碼水印（圖像）
+    嵌入明碼浮水印（圖像）
     
     參數:
         file: 上傳的圖像
-        text: 水印文字
+        text: 浮水印文字
         position: 位置 (topleft, topright, center, bottomleft, bottomright)
         opacity: 透明度 (0-100)
         font_size: 字體大小
@@ -163,7 +163,7 @@ def embed_visible_watermark():
         font_size = int(request.form.get('font_size', 36))
         color = request.form.get('color', '#000000')
         
-        # 網格水印參數
+        # 網格浮水印參數
         watermark_x = int(request.form.get('watermark_x', 20))
         watermark_y = int(request.form.get('watermark_y', 20))
         watermark_rows = int(request.form.get('watermark_rows', 0))
@@ -204,7 +204,7 @@ def embed_visible_watermark():
         # 記錄額外資訊
         logger_service.log_operation(
             operation_type='embed_visible',
-            description=f'嵌入明碼水印成功: {watermark_text}',
+            description=f'嵌入明碼浮水印成功: {watermark_text}',
             ip_address=request.remote_addr,
             method=request.method,
             path=request.path,
@@ -221,7 +221,7 @@ def embed_visible_watermark():
         return jsonify({
             'success': True,
             'output_path': f'/output/{output_filename}',
-            'message': '明碼水印嵌入成功'
+            'message': '明碼浮水印嵌入成功'
         })
     
     except Exception as e:
@@ -241,13 +241,13 @@ def embed_visible_watermark():
 @log_api_call('embed_blind')
 def embed_blind_watermark():
     """
-    嵌入隱碼水印
+    嵌入隱碼浮水印
     
     參數:
         file: 上傳的圖像
-        watermark: 水印文字
+        watermark: 浮水印文字
         password_img: 圖像密碼
-        password_wm: 水印密碼
+        password_wm: 浮水印密碼
     """
     try:
         if 'file' not in request.files:
@@ -265,7 +265,7 @@ def embed_blind_watermark():
         password_img = int(request.form.get('password_img', 1))
         password_wm = int(request.form.get('password_wm', 1))
         
-        # 嵌入水印
+        # 嵌入浮水印
         output_filename = f"blind_{datetime.now().strftime('%Y%m%d_%H%M%S')}.png"
         output_path = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
         
@@ -280,7 +280,7 @@ def embed_blind_watermark():
         # 記錄額外資訊
         logger_service.log_operation(
             operation_type='embed_blind',
-            description=f'嵌入隱碼水印成功: {watermark_text[:20]}...',
+            description=f'嵌入隱碼浮水印成功: {watermark_text[:20]}...',
             ip_address=request.remote_addr,
             method=request.method,
             path=request.path,
@@ -296,7 +296,7 @@ def embed_blind_watermark():
             'success': True,
             'output_path': f'/output/{output_filename}',
             'wm_length': wm_length,
-            'message': '隱碼水印嵌入成功'
+            'message': '隱碼浮水印嵌入成功'
         })
     
     except Exception as e:
@@ -316,13 +316,13 @@ def embed_blind_watermark():
 @log_api_call('extract_blind')
 def extract_blind_watermark():
     """
-    提取隱碼水印
+    提取隱碼浮水印
     
     參數:
-        file: 帶水印的圖像
-        wm_length: 水印位元長度
+        file: 帶浮水印的圖像
+        wm_length: 浮水印位元長度
         password_img: 圖像密碼
-        password_wm: 水印密碼
+        password_wm: 浮水印密碼
     """
     try:
         if 'file' not in request.files:
@@ -336,7 +336,7 @@ def extract_blind_watermark():
         password_img = int(request.form.get('password_img', 1))
         password_wm = int(request.form.get('password_wm', 1))
         
-        # 提取水印
+        # 提取浮水印
         extracted_text = watermark_service.extract_blind_watermark(
             input_path=input_path,
             wm_length=wm_length,
@@ -347,7 +347,7 @@ def extract_blind_watermark():
         # 記錄額外資訊
         logger_service.log_operation(
             operation_type='extract_blind',
-            description=f'提取隱碼水印成功: {extracted_text[:20] if extracted_text else "空"}...',
+            description=f'提取隱碼浮水印成功: {extracted_text[:20] if extracted_text else "空"}...',
             ip_address=request.remote_addr,
             method=request.method,
             path=request.path,
@@ -361,7 +361,7 @@ def extract_blind_watermark():
         return jsonify({
             'success': True,
             'watermark': extracted_text,
-            'message': '隱碼水印提取成功'
+            'message': '隱碼浮水印提取成功'
         })
     
     except Exception as e:
@@ -384,7 +384,7 @@ def apply_attack():
     應用攻擊測試
     
     參數:
-        file: 帶水印的圖像
+        file: 帶浮水印的圖像
         attack_type: 攻擊類型 (cut, resize, bright, shelter, salt_pepper, rot)
         其他參數根據攻擊類型而定
     """

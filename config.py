@@ -14,7 +14,7 @@ class Config:
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB
     ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'bmp', 'gif'}
     
-    # 水印配置
+    # 浮水印配置
     DEFAULT_WATERMARK_TEXT = '機密文件'
     DEFAULT_FONT_SIZE = 36
     DEFAULT_OPACITY = 0.5

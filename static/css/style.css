@@ -195,7 +195,7 @@ body {
     width: 100%;
 }
 
-/* 水印展示區 */
+/* 浮水印展示區 */
 .watermark-demo {
     display: grid;
     grid-template-columns: 1fr 2fr;

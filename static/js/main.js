@@ -1,15 +1,15 @@
 /**
- * 雙重水印系統 - 主要前端邏輯
+ * 雙重浮水印系統 - 主要前端邏輯
  */
 
-// 初始化零寬字符水印引擎
+// 初始化零寬字符浮水印引擎
 const zwm = new ZeroWidthWatermark();
 
 /**
- * 網頁水印功能
+ * 網頁浮水印功能
  */
 const WebpageWatermark = {
-  // 套用網頁明碼水印
+  // 套用網頁明碼浮水印
   applyVisible: function(config) {
     if (typeof watermark === 'undefined') {
       console.error('watermark.js 未載入');
@@ -20,7 +20,7 @@ const WebpageWatermark = {
     const watermarkConfig = {
       watermark_id: config.watermark_id || 'wm_div_id',
       watermark_prefix: config.watermark_prefix || 'mask_div_id',
-      watermark_txt: config.watermark_txt || "測試水印",
+      watermark_txt: config.watermark_txt || "測試浮水印",
       watermark_x: config.watermark_x !== undefined ? config.watermark_x : 20,
       watermark_y: config.watermark_y !== undefined ? config.watermark_y : 20,
       watermark_rows: config.watermark_rows !== undefined ? config.watermark_rows : 0,
@@ -43,7 +43,7 @@ const WebpageWatermark = {
     watermark.load(watermarkConfig);
   },
   
-  // 移除網頁明碼水印
+  // 移除網頁明碼浮水印
   removeVisible: function() {
     try {
       // 使用 watermark.js 的 remove 方法
@@ -51,8 +51,8 @@ const WebpageWatermark = {
         watermark.remove();
       }
       
-      // 手動移除水印元素（作為備用方案）
-      // 查找所有可能的水印容器
+      // 手動移除浮水印元素（作為備用方案）
+      // 查找所有可能的浮水印容器
       const possibleIds = ['wm_div_id', 'watermark_div'];
       possibleIds.forEach(id => {
         const element = document.getElementById(id);
@@ -83,30 +83,30 @@ const WebpageWatermark = {
       
       return true;
     } catch (error) {
-      console.error('移除水印時發生錯誤:', error);
+      console.error('移除浮水印時發生錯誤:', error);
       return false;
     }
   },
   
-  // 套用網頁隱碼水印
+  // 套用網頁隱碼浮水印
   applyInvisible: function(text, selector = 'p, h1, h2, h3, div') {
     zwm.embedIntoPage(selector, text);
-    console.log('隱碼水印已嵌入:', text);
+    console.log('隱碼浮水印已嵌入:', text);
   },
   
-  // 提取網頁隱碼水印
+  // 提取網頁隱碼浮水印
   extractInvisible: function() {
     const extracted = zwm.extractFromPage();
-    console.log('提取的隱碼水印:', extracted);
+    console.log('提取的隱碼浮水印:', extracted);
     return extracted;
   }
 };
 
 /**
- * 圖像水印功能
+ * 圖像浮水印功能
  */
 const ImageWatermark = {
-  // 嵌入明碼水印
+  // 嵌入明碼浮水印
   embedVisible: async function(file, options) {
     const formData = new FormData();
     formData.append('file', file);
@@ -116,7 +116,7 @@ const ImageWatermark = {
     formData.append('font_size', options.font_size || 36);
     formData.append('color', options.color || '#000000');
     
-    // 網格水印參數
+    // 網格浮水印參數
     if (options.watermark_x !== undefined) formData.append('watermark_x', options.watermark_x);
     if (options.watermark_y !== undefined) formData.append('watermark_y', options.watermark_y);
     if (options.watermark_rows !== undefined) formData.append('watermark_rows', options.watermark_rows);
@@ -135,14 +135,14 @@ const ImageWatermark = {
     
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || '嵌入水印失敗');
+      throw new Error(error.error || '嵌入浮水印失敗');
     }
     
     const data = await response.json();
     return data.output_path;
   },
   
-  // 嵌入隱碼水印
+  // 嵌入隱碼浮水印
   embedBlind: async function(file, text, password_img = 1, password_wm = 1) {
     const formData = new FormData();
     formData.append('file', file);
@@ -157,7 +157,7 @@ const ImageWatermark = {
     
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || '嵌入隱碼水印失敗');
+      throw new Error(error.error || '嵌入隱碼浮水印失敗');
     }
     
     const data = await response.json();
@@ -167,7 +167,7 @@ const ImageWatermark = {
     };
   },
   
-  // 提取隱碼水印
+  // 提取隱碼浮水印
   extractBlind: async function(file, length, password_img = 1, password_wm = 1) {
     const formData = new FormData();
     formData.append('file', file);
@@ -182,7 +182,7 @@ const ImageWatermark = {
     
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.error || '提取隱碼水印失敗');
+      throw new Error(error.error || '提取隱碼浮水印失敗');
     }
     
     const data = await response.json();

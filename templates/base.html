@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}雙重水印系統{% endblock %}</title>
+    <title>{% block title %}雙重浮水印系統{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     {% block extra_css %}{% endblock %}
 </head>
@@ -11,10 +11,10 @@
     <header>
         <nav class="navbar">
             <div class="container">
-                <a href="/" class="logo">🔒 雙重水印系統</a>
+                <a href="/" class="logo">🔒 雙重浮水印系統</a>
                 <ul class="nav-links">
                     <li><a href="/">首頁</a></li>
-                    <li><a href="/webpage">網頁水印</a></li>
+                    <li><a href="/webpage">網頁浮水印</a></li>
                     <li><a href="/image-visible">圖像明碼</a></li>
                     <li><a href="/image-blind">圖像隱碼</a></li>
                 </ul>
@@ -28,7 +28,7 @@
     
     <footer>
         <div class="container">
-            <p>© 2025 雙重水印系統 | Flask + blind_watermark + watermark.js</p>
+            <p>© 2025 雙重浮水印系統 | Flask + blind_watermark + watermark.js</p>
         </div>
     </footer>
     

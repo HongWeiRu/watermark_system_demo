@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 
-{% block title %}圖像明碼水印 - 雙重水印系統{% endblock %}
+{% block title %}圖像明碼浮水印 - 雙重浮水印系統{% endblock %}
 
 {% block content %}
 <div class="image-watermark-container">
     <div class="page-header">
-        <h1>🖼️ 圖像明碼水印</h1>
-        <p class="subtitle">為圖像添加可見文字水印，支援單個或網格排列</p>
+        <h1>🖼️ 圖像明碼浮水印</h1>
+        <p class="subtitle">為圖像添加可見文字浮水印，支援單個或網格排列</p>
         <a href="/" class="back-link">← 返回首頁</a>
     </div>
     
@@ -14,7 +14,7 @@
         <!-- 左側控制面板 -->
         <div class="control-panel">
             <div class="panel-header">
-                <h2>⚙️ 水印設定</h2>
+                <h2>⚙️ 浮水印設定</h2>
                 <div class="quick-actions">
                     <button onclick="embedVisibleWatermark()" class="btn btn-primary btn-sm">
                         <span class="icon">✓</span> 嵌入
@@ -44,26 +44,26 @@
             <div id="tab-basic" class="tab-content active">
                 <div class="form-group">
                     <label>
-                        <span class="label-text">水印文字</span>
-                        <span class="label-hint">顯示在水印上的文字</span>
+                        <span class="label-text">浮水印文字</span>
+                        <span class="label-hint">顯示在浮水印上的文字</span>
                     </label>
-                    <input type="text" id="watermark_text" value="機密文件" placeholder="輸入水印文字" />
+                    <input type="text" id="watermark_text" value="機密文件" placeholder="輸入浮水印文字" />
                 </div>
                 
                 <div class="form-group">
                     <label>
-                        <span class="label-text">水印模式</span>
+                        <span class="label-text">浮水印模式</span>
                         <span class="label-hint">選擇單個或網格排列</span>
                     </label>
                     <select id="position_mode" onchange="togglePositionMode()">
-                        <option value="grid" selected>網格排列（多個水印）</option>
-                        <option value="single">單個水印</option>
+                        <option value="grid" selected>網格排列（多個浮水印）</option>
+                        <option value="single">單個浮水印</option>
                     </select>
                 </div>
                 
                 <div class="form-group" id="single_position_group" style="display: none;">
                     <label>
-                        <span class="label-text">單個水印位置</span>
+                        <span class="label-text">單個浮水印位置</span>
                     </label>
                     <select id="single_position">
                         <option value="topleft">左上</option>
@@ -179,7 +179,7 @@
             <div id="tab-advanced" class="tab-content">
                 <div class="form-group">
                     <label>
-                        <span class="label-text">水印寬度 (留空=自動)</span>
+                        <span class="label-text">浮水印寬度 (留空=自動)</span>
                     </label>
                     <input type="number" id="watermark_width" value="" min="0" placeholder="自動" />
                     <span class="unit">px</span>
@@ -187,7 +187,7 @@
                 
                 <div class="form-group">
                     <label>
-                        <span class="label-text">水印高度 (留空=自動)</span>
+                        <span class="label-text">浮水印高度 (留空=自動)</span>
                     </label>
                     <input type="number" id="watermark_height" value="" min="0" placeholder="自動" />
                     <span class="unit">px</span>
@@ -205,7 +205,7 @@
                 <div id="image_preview" class="image-preview-placeholder">
                     <div class="placeholder-content">
                         <span class="placeholder-icon">📷</span>
-                        <p>請上傳圖像並嵌入水印</p>
+                        <p>請上傳圖像並嵌入浮水印</p>
                     </div>
                 </div>
                 
@@ -300,12 +300,12 @@ async function embedVisibleWatermark() {
     }
     
     if (!text) {
-        Utils.showMessage('請輸入水印文字', 'error');
+        Utils.showMessage('請輸入浮水印文字', 'error');
         return;
     }
     
     try {
-        Utils.showMessage('正在嵌入水印...', 'info');
+        Utils.showMessage('正在嵌入浮水印...', 'info');
         
         const file = fileInput.files[0];
         
@@ -340,13 +340,13 @@ async function embedVisibleWatermark() {
         const resultDiv = document.getElementById('preview_result');
         resultDiv.innerHTML = `
             <div class="result-header">
-                <h3>✓ 帶明碼水印的圖像</h3>
+                <h3>✓ 帶明碼浮水印的圖像</h3>
                 <a href="${outputPath}" download class="btn btn-primary btn-sm">下載圖像</a>
             </div>
-            <img src="${outputPath}" alt="帶水印圖像" class="preview-image" />
+            <img src="${outputPath}" alt="帶浮水印圖像" class="preview-image" />
         `;
         
-        Utils.showMessage('✓ 明碼水印已嵌入!', 'success');
+        Utils.showMessage('✓ 明碼浮水印已嵌入!', 'success');
         
     } catch (error) {
         Utils.showMessage('嵌入失敗: ' + error.message, 'error');

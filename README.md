@@ -1,13 +1,13 @@
-# 雙重水印系統
+# 雙重浮水印系統
 
-一個完整的雙重水印系統，支援**明碼水印**和**隱碼水印**，包含網頁和圖像兩種載體類型。
+一個完整的雙重浮水印系統，支援**明碼浮水印**和**隱碼浮水印**，包含網頁和圖像兩種載體類型。
 
 ## 功能特色
 
-- **網頁明碼水印**: 使用 watermark.js 在網頁上添加可見的半透明文字水印
-- **網頁隱碼水印**: 使用零寬字符(Zero-Width Characters)在網頁文本中嵌入不可見水印
-- **圖像明碼水印**: 使用 Pillow 在圖像上添加可見水印
-- **圖像隱碼水印**: 使用 blind_watermark (DWT-DCT-SVD) 在圖像頻域嵌入不可見水印
+- **網頁明碼浮水印**: 使用 watermark.js 在網頁上添加可見的半透明文字浮水印
+- **網頁隱碼浮水印**: 使用零寬字符(Zero-Width Characters)在網頁文本中嵌入不可見浮水印
+- **圖像明碼浮水印**: 使用 Pillow 在圖像上添加可見浮水印
+- **圖像隱碼浮水印**: 使用 blind_watermark (DWT-DCT-SVD) 在圖像頻域嵌入不可見浮水印
 
 ## 技術架構
 
@@ -83,7 +83,7 @@ watermark_system_demo/
 ├── wsgi.py                     # WSGI 入口
 │
 ├── services/                   # 服務層
-│   ├── watermark_service.py   # 統一水印服務
+│   ├── watermark_service.py   # 統一浮水印服務
 │   ├── image_processor.py     # 圖像處理
 │   └── file_manager.py        # 檔案管理
 │
@@ -92,14 +92,14 @@ watermark_system_demo/
 │   │   └── style.css
 │   ├── js/
 │   │   ├── watermark.js        # 需要下載
-│   │   ├── zero-width.js       # 網頁隱碼水印庫
+│   │   ├── zero-width.js       # 網頁隱碼浮水印庫
 │   │   └── main.js             # 主要邏輯
 │   └── uploads/                # 上傳目錄
 │
 ├── templates/                  # HTML 模板
 │   ├── base.html               # 基礎模板
 │   ├── index.html              # 首頁
-│   ├── webpage.html            # 網頁水印頁面
+│   ├── webpage.html            # 網頁浮水印頁面
 │   ├── image_visible.html      # 圖像明碼頁面
 │   └── image_blind.html        # 圖像隱碼頁面
 │
@@ -108,47 +108,47 @@ watermark_system_demo/
 
 ## API 端點
 
-### 圖像明碼水印
-- `POST /api/image/visible/embed` - 嵌入明碼水印
+### 圖像明碼浮水印
+- `POST /api/image/visible/embed` - 嵌入明碼浮水印
 
-### 圖像隱碼水印
-- `POST /api/image/blind/embed` - 嵌入隱碼水印
-- `POST /api/image/blind/extract` - 提取隱碼水印
+### 圖像隱碼浮水印
+- `POST /api/image/blind/embed` - 嵌入隱碼浮水印
+- `POST /api/image/blind/extract` - 提取隱碼浮水印
 
 ## 使用說明
 
-### 網頁水印
+### 網頁浮水印
 1. 訪問 `/webpage`
-2. 配置明碼水印參數（文字、透明度、顏色等）
-3. 點擊「套用明碼水印」
-4. 輸入隱藏文字，點擊「嵌入隱碼水印」
-5. 點擊「提取隱碼水印」查看結果
+2. 配置明碼浮水印參數（文字、透明度、顏色等）
+3. 點擊「套用明碼浮水印」
+4. 輸入隱藏文字，點擊「嵌入隱碼浮水印」
+5. 點擊「提取隱碼浮水印」查看結果
 
-### 圖像明碼水印
+### 圖像明碼浮水印
 1. 訪問 `/image-visible`
 2. 上傳圖像
-3. 配置水印參數
-4. 點擊「嵌入水印」
-5. 下載帶水印的圖像
+3. 配置浮水印參數
+4. 點擊「嵌入浮水印」
+5. 下載帶浮水印的圖像
 
-### 圖像隱碼水印
+### 圖像隱碼浮水印
 1. 訪問 `/image-blind`
-2. 上傳圖像並輸入水印文字
-3. 點擊「嵌入水印」
-4. 記下水印長度（位元數）
-5. 上傳帶水印的圖像，輸入水印長度
-6. 點擊「提取水印」查看結果
+2. 上傳圖像並輸入浮水印文字
+3. 點擊「嵌入浮水印」
+4. 記下浮水印長度（位元數）
+5. 上傳帶浮水印的圖像，輸入浮水印長度
+6. 點擊「提取浮水印」查看結果
 
 ## 注意事項
 
-1. **watermark.js 必須下載**: 網頁明碼水印功能需要 watermark.js 庫，請確保已下載並放置在 `static/js/watermark.js`
+1. **watermark.js 必須下載**: 網頁明碼浮水印功能需要 watermark.js 庫，請確保已下載並放置在 `static/js/watermark.js`
 2. **圖像格式**: 支援 PNG, JPG, JPEG, BMP, GIF
 3. **文件大小**: 最大支援 16MB
-4. **隱碼水印長度**: 提取隱碼水印時必須提供正確的水印長度（位元數）
+4. **隱碼浮水印長度**: 提取隱碼浮水印時必須提供正確的浮水印長度（位元數）
 
 ## 開發說明
 
-本專案按照《雙重水印系統開發文件.md》規格開發，包含完整的服務層、API 路由和前端界面。
+本專案按照《雙重浮水印系統開發文件.md》規格開發，包含完整的服務層、API 路由和前端界面。
 
 ## 授權
 

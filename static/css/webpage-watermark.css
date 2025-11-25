@@ -1,4 +1,4 @@
-/* 網頁水印頁面專用樣式 */
+/* 網頁浮水印頁面專用樣式 */
 
 .webpage-watermark-container {
     min-height: 100vh;
@@ -267,7 +267,7 @@
     color: #718096;
 }
 
-/* 隱碼水印區 */
+/* 隱碼浮水印區 */
 .invisible-watermark-section {
     border-top: 2px solid #e2e8f0;
     padding: 1.5rem;
@@ -280,7 +280,7 @@
     color: #2d3748;
 }
 
-/* 隱碼水印區域的按鈕樣式（覆蓋 .btn-sm 的白色樣式） */
+/* 隱碼浮水印區域的按鈕樣式（覆蓋 .btn-sm 的白色樣式） */
 .invisible-watermark-section .btn-sm {
     background: #667eea !important;
     color: white !important;

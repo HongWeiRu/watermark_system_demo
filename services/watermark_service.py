@@ -1,6 +1,6 @@
 """
-水印服務統一介面
-使用 blind_watermark 庫實現隱碼水印功能
+浮水印服務統一介面
+使用 blind_watermark 庫實現隱碼浮水印功能
 """
 from blind_watermark import WaterMark, att, recover
 import os
@@ -14,33 +14,33 @@ logger = logging.getLogger(__name__)
 
 
 class WatermarkService:
-    """水印服務統一介面"""
+    """浮水印服務統一介面"""
     
     def __init__(self, output_dir='output'):
         """
-        初始化水印服務
+        初始化浮水印服務
         
         Args:
             output_dir (str): 輸出目錄路徑
         """
         self.output_dir = output_dir
         os.makedirs(output_dir, exist_ok=True)
-        logger.info(f"水印服務初始化完成，輸出目錄: {output_dir}")
+            logger.info(f"浮水印服務初始化完成，輸出目錄: {output_dir}")
     
     def embed_blind_watermark(self, input_path, output_path, watermark_text, 
                              password_img=1, password_wm=1):
         """
-        嵌入隱碼水印
+        嵌入隱碼浮水印
         
         Args:
             input_path (str): 輸入圖像路徑
             output_path (str): 輸出圖像路徑
-            watermark_text (str): 水印文字
+            watermark_text (str): 浮水印文字
             password_img (int): 圖像密碼，用於加密圖像
-            password_wm (int): 水印密碼，用於加密水印
+            password_wm (int): 浮水印密碼，用於加密浮水印
         
         Returns:
-            int: 水印位元長度（提取時需要此參數）
+            int: 浮水印位元長度（提取時需要此參數）
         
         Raises:
             FileNotFoundError: 輸入圖像文件不存在
@@ -52,17 +52,17 @@ class WatermarkService:
             if not os.path.exists(input_path):
                 raise FileNotFoundError(f"輸入圖像文件不存在: {input_path}")
             
-            # 驗證水印文字
+            # 驗證浮水印文字
             if not watermark_text or not isinstance(watermark_text, str):
-                raise ValueError("水印文字必須是非空字符串")
+                raise ValueError("浮水印文字必須是非空字符串")
             
             # 驗證密碼參數
             if not isinstance(password_img, int) or password_img < 1:
                 raise ValueError("圖像密碼必須是大於0的整數")
             if not isinstance(password_wm, int) or password_wm < 1:
-                raise ValueError("水印密碼必須是大於0的整數")
+                raise ValueError("浮水印密碼必須是大於0的整數")
             
-            logger.info(f"開始嵌入水印: 輸入={input_path}, 輸出={output_path}, 水印長度={len(watermark_text)}")
+            logger.info(f"開始嵌入浮水印: 輸入={input_path}, 輸出={output_path}, 浮水印長度={len(watermark_text)}")
             
             # 創建 WaterMark 實例
             bwm = WaterMark(password_img=password_img, password_wm=password_wm)
@@ -71,17 +71,17 @@ class WatermarkService:
             bwm.read_img(input_path)
             logger.debug(f"圖像讀取成功: {input_path}")
             
-            # 讀取水印文字
+            # 讀取浮水印文字
             bwm.read_wm(watermark_text, mode='str')
-            logger.debug(f"水印文字讀取成功，長度: {len(watermark_text)}")
+            logger.debug(f"浮水印文字讀取成功，長度: {len(watermark_text)}")
             
-            # 嵌入水印
+            # 嵌入浮水印
             bwm.embed(output_path)
-            logger.info(f"水印嵌入成功: {output_path}")
+            logger.info(f"浮水印嵌入成功: {output_path}")
             
-            # 獲取水印位元長度（提取時需要）
+            # 獲取浮水印位元長度（提取時需要）
             wm_length = len(bwm.wm_bit)
-            logger.info(f"水印位元長度: {wm_length}")
+            logger.info(f"浮水印位元長度: {wm_length}")
             
             return wm_length
             
@@ -92,22 +92,22 @@ class WatermarkService:
             logger.error(f"參數驗證錯誤: {e}")
             raise
         except Exception as e:
-            logger.error(f"嵌入水印時發生未知錯誤: {e}", exc_info=True)
-            raise Exception(f"嵌入水印失敗: {str(e)}")
+            logger.error(f"嵌入浮水印時發生未知錯誤: {e}", exc_info=True)
+            raise Exception(f"嵌入浮水印失敗: {str(e)}")
     
     def extract_blind_watermark(self, input_path, wm_length, 
                                 password_img=1, password_wm=1):
         """
-        提取隱碼水印
+        提取隱碼浮水印
         
         Args:
-            input_path (str): 帶水印的圖像路徑
-            wm_length (int): 水印位元長度（必須與嵌入時一致）
+            input_path (str): 帶浮水印的圖像路徑
+            wm_length (int): 浮水印位元長度（必須與嵌入時一致）
             password_img (int): 圖像密碼（必須與嵌入時一致）
-            password_wm (int): 水印密碼（必須與嵌入時一致）
+            password_wm (int): 浮水印密碼（必須與嵌入時一致）
         
         Returns:
-            str: 提取的水印文字
+            str: 提取的浮水印文字
         
         Raises:
             FileNotFoundError: 輸入圖像文件不存在
@@ -119,29 +119,29 @@ class WatermarkService:
             if not os.path.exists(input_path):
                 raise FileNotFoundError(f"輸入圖像文件不存在: {input_path}")
             
-            # 驗證水印長度
+            # 驗證浮水印長度
             if not isinstance(wm_length, int) or wm_length <= 0:
-                raise ValueError("水印長度必須是大於0的整數")
+                raise ValueError("浮水印長度必須是大於0的整數")
             
             # 驗證密碼參數
             if not isinstance(password_img, int) or password_img < 1:
                 raise ValueError("圖像密碼必須是大於0的整數")
             if not isinstance(password_wm, int) or password_wm < 1:
-                raise ValueError("水印密碼必須是大於0的整數")
+                raise ValueError("浮水印密碼必須是大於0的整數")
             
-            logger.info(f"開始提取水印: 輸入={input_path}, 水印長度={wm_length}")
+            logger.info(f"開始提取浮水印: 輸入={input_path}, 浮水印長度={wm_length}")
             
             # 創建 WaterMark 實例（必須使用與嵌入時相同的密碼）
             bwm = WaterMark(password_img=password_img, password_wm=password_wm)
             
-            # 提取水印
+            # 提取浮水印
             extracted_text = bwm.extract(
                 filename=input_path,
                 wm_shape=wm_length,
                 mode='str'
             )
             
-            logger.info(f"水印提取成功，提取長度: {len(extracted_text) if extracted_text else 0}")
+            logger.info(f"浮水印提取成功，提取長度: {len(extracted_text) if extracted_text else 0}")
             
             return extracted_text
             
@@ -152,8 +152,8 @@ class WatermarkService:
             logger.error(f"參數驗證錯誤: {e}")
             raise
         except Exception as e:
-            logger.error(f"提取水印時發生未知錯誤: {e}", exc_info=True)
-            raise Exception(f"提取水印失敗: {str(e)}")
+            logger.error(f"提取浮水印時發生未知錯誤: {e}", exc_info=True)
+            raise Exception(f"提取浮水印失敗: {str(e)}")
     
     def apply_attack(self, input_path, output_path, attack_type, **kwargs):
         """
@@ -168,7 +168,7 @@ class WatermarkService:
         - 'rot': 旋轉攻擊 (rot_att)
         
         Args:
-            input_path (str): 輸入圖像路徑（帶水印的圖像）
+            input_path (str): 輸入圖像路徑（帶浮水印的圖像）
             output_path (str): 輸出圖像路徑（攻擊後的圖像）
             attack_type (str): 攻擊類型
             **kwargs: 攻擊參數
